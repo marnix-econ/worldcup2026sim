@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -142,6 +142,12 @@
   @media (max-width:560px){
     .header { flex-direction:column; align-items:flex-start; }
   }
+  /* projected bracket */
+  .bracket-scroll { overflow-x:auto; padding-bottom:10px; }
+  .bracket-scroll svg { display:block; }
+  .bracket-champion { margin-top:16px; padding:16px 20px; border:1px solid var(--gold); border-radius:10px; background:rgba(255,215,0,0.06); font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:1px; color:var(--gold); }
+  .bracket-champion span { color:var(--text); }
+  .bracket-note { padding:16px 20px; border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--muted); font-size:14px; line-height:1.6; }
 </style>
 </head>
 <body>
@@ -152,13 +158,13 @@
       <h1>2026 WORLD <span>CUP</span> SIM</h1>
       <p>Monte Carlo Simulator · Live Edition</p>
     </div>
-    <div class="badge">Group results locked through Jun 21, 2026</div>
+    <div class="badge">Group results locked through Argentina–Austria, Jun 22, 2026</div>
   </div>
 
   <section id="groups-section">
     <div class="section-label">Group Stage — Actual Results</div>
     <h2>Where things stand right now</h2>
-    <p class="sub">The records below are the real group-stage tables, built from official box scores through the night of June 21 — including Spain's 4–0 rout of Saudi Arabia, Egypt's 2–1 comeback over New Zealand, ten-man Belgium's frustrating 0–0 with Iran, and Uruguay's 2–2 with Cape Verde. Everything still on the schedule — today's June 22 fixtures and the rest of matchday 3 — is left for the simulator below to play out.</p>
+    <p class="sub">The records below are the real group-stage tables from official box scores. The latest locked result is Argentina's 2–0 win over Austria on June 22, where Messi's brace made him the men's World Cup all-time top scorer. The three remaining June 22 night games — France–Iraq, Norway–Senegal, and Jordan–Algeria — hadn't kicked off yet, so they're left for the simulator along with the rest of matchday 3.</p>
     <div class="groups-grid" id="groupsGrid"></div>
     <div class="legend">
       <span class="l1">Through to Round of 32</span>
@@ -188,7 +194,7 @@
   <section id="sim-section">
     <div class="section-label">Run It Forward</div>
     <h2>Simulate the rest of the tournament</h2>
-    <p class="sub">Each trial plays out every remaining group match, re-ranks the third-place teams, builds a Round of 32 bracket, then simulates the knockout rounds to a champion. The Round of 32 pairing logic is a simplified stand-in for FIFA's official (495-combination) third-place assignment table — it preserves the no-rematch-of-a-group-opponent rule but won't match the real bracket slot for slot.</p>
+    <p class="sub">Each trial plays out every remaining group match, ranks the twelve third-placed teams and takes the best eight, then seeds the Round of 32 using FIFA's actual fixed bracket (matches 73–88) and the official Annex C assignment table — all 495 published combinations of which groups supply the qualifying third-placed teams. The knockout tree (R32 → R16 → QF → SF → Final) follows the real match-feeds, so bracket paths and possible matchups are correct, not approximated.</p>
     <div class="sim-bar">
       <select id="trialCount">
         <option value="1000">1,000 trials (fast)</option>
@@ -205,7 +211,7 @@
         <thead>
           <tr>
             <th>Team</th><th>Grp</th>
-            <th data-k="r32">R32</th><th data-k="r16">R16</th><th data-k="qf">QF</th>
+            <th data-k="r32">16th</th><th data-k="r16">8th</th><th data-k="qf">QF</th>
             <th data-k="sf">SF</th><th data-k="f">Final</th><th data-k="champ">Champion</th>
           </tr>
         </thead>
@@ -215,27 +221,36 @@
   </section>
 
   <section id="rankings-section" style="display:none;">
-    <div class="section-label">Most Likely Group Finishes</div>
+    <div class="section-label">Projected Group Finishes</div>
     <h2>How each group is projected to end</h2>
-    <p class="sub">For every group, the simulator records each team's final position across all trials. Shown below is each team's single most likely finishing place (1st–4th), with the share of simulations that landed there in parentheses. The list order reflects the most common full ranking; a low percentage means that group is genuinely volatile.</p>
+    <p class="sub">Each group's four teams are ranked 1st through 4th by their average finishing points across all trials (using average goal difference, then Elo, as tiebreakers — mirroring FIFA's group hierarchy). The share in the last column is the probability that the team actually finishes in that projected position; a low number means the placement is a coin-flip, not a lock.</p>
     <div class="groups-grid" id="rankingsGrid"></div>
   </section>
 
-  <section id="exit-section" style="display:none;">
-    <div class="section-label">Most Likely Exit Round</div>
-    <h2>Where each team's run is projected to end</h2>
-    <p class="sub">Across all trials, this tracks the round in which each team is eliminated (or crowned). The "most likely exit" is the single most common outcome for that team — its modal fate — with the share of simulations in parentheses. Sorted by how deep that modal exit is, so the projected contenders rise to the top.</p>
-    <table class="results-table" id="exitTable">
-      <thead>
-        <tr><th>Team</th><th>Grp</th><th style="text-align:left;cursor:default;">Most likely exit</th><th>Share</th><th>Avg. finish</th></tr>
-      </thead>
-      <tbody id="exitBody"></tbody>
-    </table>
+  <section id="bracket-section" style="display:none;">
+    <div class="section-label">Projected Knockout Bracket</div>
+    <h2>If the projected group tables hold</h2>
+    <p class="sub">This takes the projected group finishes above, seeds them into FIFA's real bracket via the Annex C third-place table, then plays every tie out by always advancing the more likely winner. Each match box shows that team's chance of advancing — including via a penalty shootout — so you can see which ties are near coin-flips (shown in amber). The bracket reads inward from both sides toward the Final in the centre.</p>
+    <div id="bracketWrap"></div>
+  </section>
+
+  <section id="bracket-nl-section" style="display:none;">
+    <div class="section-label">A Path To Glory</div>
+    <h2>How the Netherlands might win</h2>
+    <p class="sub">This is the first complete simulated tournament in this batch where the Netherlands win it all — a full run including the simulated group stage, so the qualifiers, seeding and every knockout result are exactly as they fell in that one simulation (its field will differ from the projected bracket above). Each box shows the winner's model probability for that tie; figures in red mark games the winner was favoured to lose. Re-run the simulation to surface a different path — it's one of many ways it could happen, not a prediction.</p>
+    <div id="bracketWrapNL"></div>
+  </section>
+
+  <section id="bracket-be-section" style="display:none;">
+    <div class="section-label">A Path To Glory</div>
+    <h2>How Belgium might win</h2>
+    <p class="sub">The same idea for Belgium: the first full simulated run in this batch — group stage included — that ends with Belgium as champions. Qualifiers, seeding and results are all taken straight from that single simulation. Red percentages flag the upsets they needed, and the banner totals up the games they won as the underdog. Like the Netherlands path, it's one sampled route to the title rather than the likeliest sequence of results.</p>
+    <div id="bracketWrapBE"></div>
   </section>
 
   <footer>
     <p>
-      Group-stage box scores sourced from CBS Sports' live standings page and FIFA.com match reports, current as of June 19–21, 2026. Elo ratings are estimates for simulation purposes, not an official ranking. Round of 32 bracket logic is a deliberate simplification of FIFA's real combinatorial assignment table for qualifying third-place teams — treat bracket paths as illustrative, not predictive of the actual draw. This is a personal project, not affiliated with FIFA.
+      Group-stage box scores sourced from live standings and FIFA.com match reports, current through Argentina–Austria on June 22, 2026. Elo ratings are estimates for simulation purposes, not an official ranking. The Round of 32 ("16th finals") seeding uses FIFA's real fixed bracket and the official Annex C assignment table — all 495 published third-place combinations — so bracket paths are accurate, though the projected single bracket is only one illustrative outcome. This is a personal project, not affiliated with FIFA.
     </p>
   </footer>
 
@@ -252,7 +267,7 @@ const TEAMS = {
   "New Zealand":1720, "Iran":1815, "Belgium":1960, "Egypt":1860,
   "Saudi Arabia":1780, "Uruguay":1950, "Spain":2090, "Cape Verde":1720,
   "Norway":1880, "France":2090, "Senegal":1900, "Iraq":1730,
-  "Argentina":2110, "Austria":1870, "Jordan":1690, "Algeria":1800,
+  "Argentina":2115, "Austria":1855, "Jordan":1690, "Algeria":1800,
   "Colombia":1960, "DR Congo":1740, "Portugal":2030, "Uzbekistan":1690,
   "England":2070, "Ghana":1820, "Panama":1760, "Croatia":1900
 };
@@ -301,7 +316,7 @@ const LOCKED = {
   "France":{w:1,d:0,l:0,gf:3,ga:1,pts:3}, "Norway":{w:1,d:0,l:0,gf:4,ga:1,pts:3},
   "Senegal":{w:0,d:0,l:1,gf:1,ga:3,pts:0}, "Iraq":{w:0,d:0,l:1,gf:1,ga:4,pts:0},
 
-  "Argentina":{w:1,d:0,l:0,gf:3,ga:0,pts:3}, "Austria":{w:1,d:0,l:0,gf:3,ga:1,pts:3},
+  "Argentina":{w:2,d:0,l:0,gf:5,ga:0,pts:6}, "Austria":{w:1,d:0,l:1,gf:3,ga:3,pts:3},
   "Jordan":{w:0,d:0,l:1,gf:1,ga:3,pts:0}, "Algeria":{w:0,d:0,l:1,gf:0,ga:3,pts:0},
 
   "Colombia":{w:1,d:0,l:0,gf:3,ga:1,pts:3}, "DR Congo":{w:0,d:1,l:0,gf:1,ga:1,pts:1},
@@ -321,7 +336,7 @@ const REMAINING = {
   G:[["Egypt","Iran"],["New Zealand","Belgium"]],
   H:[["Cape Verde","Saudi Arabia"],["Uruguay","Spain"]],
   I:[["France","Iraq"],["Norway","Senegal"],["Norway","France"],["Senegal","Iraq"]],
-  J:[["Argentina","Austria"],["Jordan","Algeria"],["Algeria","Austria"],["Jordan","Argentina"]],
+  J:[["Jordan","Algeria"],["Algeria","Austria"],["Jordan","Argentina"]],
   K:[["Portugal","Uzbekistan"],["Colombia","DR Congo"],["Colombia","Portugal"],["DR Congo","Uzbekistan"]],
   L:[["England","Ghana"],["Panama","Croatia"],["Panama","England"],["Croatia","Ghana"]]
 };
@@ -417,6 +432,10 @@ document.getElementById('resetEloBtn').addEventListener('click', ()=>{
   renderEloPanel();
 });
 
+const ANNEX_C = {"EFGHIJKL":"EJIFHGLK","DFGHIJKL":"HGIDJFLK","DEGHIJKL":"EJIDHGLK","DEFHIJKL":"EJIDHFLK","DEFGIJKL":"EGIDJFLK","DEFGHJKL":"EGJDHFLK","DEFGHIKL":"EGIDHFLK","DEFGHIJL":"EGJDHFLI","DEFGHIJK":"EGJDHFIK","CFGHIJKL":"HGICJFLK","CEGHIJKL":"EJICHGLK","CEFHIJKL":"EJICHFLK","CEFGIJKL":"EGICJFLK","CEFGHJKL":"EGJCHFLK","CEFGHIKL":"EGICHFLK","CEFGHIJL":"EGJCHFLI","CEFGHIJK":"EGJCHFIK","CDGHIJKL":"HGICJDLK","CDFHIJKL":"CJIDHFLK","CDFGIJKL":"CGIDJFLK","CDFGHJKL":"CGJDHFLK","CDFGHIKL":"CGIDHFLK","CDFGHIJL":"CGJDHFLI","CDFGHIJK":"CGJDHFIK","CDEHIJKL":"EJICHDLK","CDEGIJKL":"EGICJDLK","CDEGHJKL":"EGJCHDLK","CDEGHIKL":"EGICHDLK","CDEGHIJL":"EGJCHDLI","CDEGHIJK":"EGJCHDIK","CDEFIJKL":"CJEDIFLK","CDEFHJKL":"CJEDHFLK","CDEFHIKL":"CEIDHFLK","CDEFHIJL":"CJEDHFLI","CDEFHIJK":"CJEDHFIK","CDEFGJKL":"CGEDJFLK","CDEFGIKL":"CGEDIFLK","CDEFGIJL":"CGEDJFLI","CDEFGIJK":"CGEDJFIK","CDEFGHKL":"CGEDHFLK","CDEFGHJL":"CGJDHFLE","CDEFGHJK":"CGJDHFEK","CDEFGHIL":"CGEDHFLI","CDEFGHIK":"CGEDHFIK","CDEFGHIJ":"CGJDHFEI","BFGHIJKL":"HJBFIGLK","BEGHIJKL":"EJIBHGLK","BEFHIJKL":"EJBFIHLK","BEFGIJKL":"EJBFIGLK","BEFGHJKL":"EJBFHGLK","BEFGHIKL":"EGBFIHLK","BEFGHIJL":"EJBFHGLI","BEFGHIJK":"EJBFHGIK","BDGHIJKL":"HJBDIGLK","BDFHIJKL":"HJBDIFLK","BDFGIJKL":"IGBDJFLK","BDFGHJKL":"HGBDJFLK","BDFGHIKL":"HGBDIFLK","BDFGHIJL":"HGBDJFLI","BDFGHIJK":"HGBDJFIK","BDEHIJKL":"EJBDIHLK","BDEGIJKL":"EJBDIGLK","BDEGHJKL":"EJBDHGLK","BDEGHIKL":"EGBDIHLK","BDEGHIJL":"EJBDHGLI","BDEGHIJK":"EJBDHGIK","BDEFIJKL":"EJBDIFLK","BDEFHJKL":"EJBDHFLK","BDEFHIKL":"EIBDHFLK","BDEFHIJL":"EJBDHFLI","BDEFHIJK":"EJBDHFIK","BDEFGJKL":"EGBDJFLK","BDEFGIKL":"EGBDIFLK","BDEFGIJL":"EGBDJFLI","BDEFGIJK":"EGBDJFIK","BDEFGHKL":"EGBDHFLK","BDEFGHJL":"HGBDJFLE","BDEFGHJK":"HGBDJFEK","BDEFGHIL":"EGBDHFLI","BDEFGHIK":"EGBDHFIK","BDEFGHIJ":"HGBDJFEI","BCGHIJKL":"HJBCIGLK","BCFHIJKL":"HJBCIFLK","BCFGIJKL":"IGBCJFLK","BCFGHJKL":"HGBCJFLK","BCFGHIKL":"HGBCIFLK","BCFGHIJL":"HGBCJFLI","BCFGHIJK":"HGBCJFIK","BCEHIJKL":"EJBCIHLK","BCEGIJKL":"EJBCIGLK","BCEGHJKL":"EJBCHGLK","BCEGHIKL":"EGBCIHLK","BCEGHIJL":"EJBCHGLI","BCEGHIJK":"EJBCHGIK","BCEFIJKL":"EJBCIFLK","BCEFHJKL":"EJBCHFLK","BCEFHIKL":"EIBCHFLK","BCEFHIJL":"EJBCHFLI","BCEFHIJK":"EJBCHFIK","BCEFGJKL":"EGBCJFLK","BCEFGIKL":"EGBCIFLK","BCEFGIJL":"EGBCJFLI","BCEFGIJK":"EGBCJFIK","BCEFGHKL":"EGBCHFLK","BCEFGHJL":"HGBCJFLE","BCEFGHJK":"HGBCJFEK","BCEFGHIL":"EGBCHFLI","BCEFGHIK":"EGBCHFIK","BCEFGHIJ":"HGBCJFEI","BCDHIJKL":"HJBCIDLK","BCDGIJKL":"IGBCJDLK","BCDGHJKL":"HGBCJDLK","BCDGHIKL":"HGBCIDLK","BCDGHIJL":"HGBCJDLI","BCDGHIJK":"HGBCJDIK","BCDFIJKL":"CJBDIFLK","BCDFHJKL":"CJBDHFLK","BCDFHIKL":"CIBDHFLK","BCDFHIJL":"CJBDHFLI","BCDFHIJK":"CJBDHFIK","BCDFGJKL":"CGBDJFLK","BCDFGIKL":"CGBDIFLK","BCDFGIJL":"CGBDJFLI","BCDFGIJK":"CGBDJFIK","BCDFGHKL":"CGBDHFLK","BCDFGHJL":"CGBDHFLJ","BCDFGHJK":"HGBCJFDK","BCDFGHIL":"CGBDHFLI","BCDFGHIK":"CGBDHFIK","BCDFGHIJ":"HGBCJFDI","BCDEIJKL":"EJBCIDLK","BCDEHJKL":"EJBCHDLK","BCDEHIKL":"EIBCHDLK","BCDEHIJL":"EJBCHDLI","BCDEHIJK":"EJBCHDIK","BCDEGJKL":"EGBCJDLK","BCDEGIKL":"EGBCIDLK","BCDEGIJL":"EGBCJDLI","BCDEGIJK":"EGBCJDIK","BCDEGHKL":"EGBCHDLK","BCDEGHJL":"HGBCJDLE","BCDEGHJK":"HGBCJDEK","BCDEGHIL":"EGBCHDLI","BCDEGHIK":"EGBCHDIK","BCDEGHIJ":"HGBCJDEI","BCDEFJKL":"CJBDEFLK","BCDEFIKL":"CEBDIFLK","BCDEFIJL":"CJBDEFLI","BCDEFIJK":"CJBDEFIK","BCDEFHKL":"CEBDHFLK","BCDEFHJL":"CJBDHFLE","BCDEFHJK":"CJBDHFEK","BCDEFHIL":"CEBDHFLI","BCDEFHIK":"CEBDHFIK","BCDEFHIJ":"CJBDHFEI","BCDEFGKL":"CGBDEFLK","BCDEFGJL":"CGBDJFLE","BCDEFGJK":"CGBDJFEK","BCDEFGIL":"CGBDEFLI","BCDEFGIK":"CGBDEFIK","BCDEFGIJ":"CGBDJFEI","BCDEFGHL":"CGBDHFLE","BCDEFGHK":"CGBDHFEK","BCDEFGHJ":"HGBCJFDE","BCDEFGHI":"CGBDHFEI","AFGHIJKL":"HJIFAGLK","AEGHIJKL":"EJIAHGLK","AEFHIJKL":"EJIFAHLK","AEFGIJKL":"EJIFAGLK","AEFGHJKL":"EGJFAHLK","AEFGHIKL":"EGIFAHLK","AEFGHIJL":"EGJFAHLI","AEFGHIJK":"EGJFAHIK","ADGHIJKL":"HJIDAGLK","ADFHIJKL":"HJIDAFLK","ADFGIJKL":"IGJDAFLK","ADFGHJKL":"HGJDAFLK","ADFGHIKL":"HGIDAFLK","ADFGHIJL":"HGJDAFLI","ADFGHIJK":"HGJDAFIK","ADEHIJKL":"EJIDAHLK","ADEGIJKL":"EJIDAGLK","ADEGHJKL":"EGJDAHLK","ADEGHIKL":"EGIDAHLK","ADEGHIJL":"EGJDAHLI","ADEGHIJK":"EGJDAHIK","ADEFIJKL":"EJIDAFLK","ADEFHJKL":"HJEDAFLK","ADEFHIKL":"HEIDAFLK","ADEFHIJL":"HJEDAFLI","ADEFHIJK":"HJEDAFIK","ADEFGJKL":"EGJDAFLK","ADEFGIKL":"EGIDAFLK","ADEFGIJL":"EGJDAFLI","ADEFGIJK":"EGJDAFIK","ADEFGHKL":"HGEDAFLK","ADEFGHJL":"HGJDAFLE","ADEFGHJK":"HGJDAFEK","ADEFGHIL":"HGEDAFLI","ADEFGHIK":"HGEDAFIK","ADEFGHIJ":"HGJDAFEI","ACGHIJKL":"HJICAGLK","ACFHIJKL":"HJICAFLK","ACFGIJKL":"IGJCAFLK","ACFGHJKL":"HGJCAFLK","ACFGHIKL":"HGICAFLK","ACFGHIJL":"HGJCAFLI","ACFGHIJK":"HGJCAFIK","ACEHIJKL":"EJICAHLK","ACEGIJKL":"EJICAGLK","ACEGHJKL":"EGJCAHLK","ACEGHIKL":"EGICAHLK","ACEGHIJL":"EGJCAHLI","ACEGHIJK":"EGJCAHIK","ACEFIJKL":"EJICAFLK","ACEFHJKL":"HJECAFLK","ACEFHIKL":"HEICAFLK","ACEFHIJL":"HJECAFLI","ACEFHIJK":"HJECAFIK","ACEFGJKL":"EGJCAFLK","ACEFGIKL":"EGICAFLK","ACEFGIJL":"EGJCAFLI","ACEFGIJK":"EGJCAFIK","ACEFGHKL":"HGECAFLK","ACEFGHJL":"HGJCAFLE","ACEFGHJK":"HGJCAFEK","ACEFGHIL":"HGECAFLI","ACEFGHIK":"HGECAFIK","ACEFGHIJ":"HGJCAFEI","ACDHIJKL":"HJICADLK","ACDGIJKL":"IGJCADLK","ACDGHJKL":"HGJCADLK","ACDGHIKL":"HGICADLK","ACDGHIJL":"HGJCADLI","ACDGHIJK":"HGJCADIK","ACDFIJKL":"CJIDAFLK","ACDFHJKL":"HJFCADLK","ACDFHIKL":"HFICADLK","ACDFHIJL":"HJFCADLI","ACDFHIJK":"HJFCADIK","ACDFGJKL":"CGJDAFLK","ACDFGIKL":"CGIDAFLK","ACDFGIJL":"CGJDAFLI","ACDFGIJK":"CGJDAFIK","ACDFGHKL":"HGFCADLK","ACDFGHJL":"CGJDAFLH","ACDFGHJK":"HGJCAFDK","ACDFGHIL":"HGFCADLI","ACDFGHIK":"HGFCADIK","ACDFGHIJ":"HGJCAFDI","ACDEIJKL":"EJICADLK","ACDEHJKL":"HJECADLK","ACDEHIKL":"HEICADLK","ACDEHIJL":"HJECADLI","ACDEHIJK":"HJECADIK","ACDEGJKL":"EGJCADLK","ACDEGIKL":"EGICADLK","ACDEGIJL":"EGJCADLI","ACDEGIJK":"EGJCADIK","ACDEGHKL":"HGECADLK","ACDEGHJL":"HGJCADLE","ACDEGHJK":"HGJCADEK","ACDEGHIL":"HGECADLI","ACDEGHIK":"HGECADIK","ACDEGHIJ":"HGJCADEI","ACDEFJKL":"CJEDAFLK","ACDEFIKL":"CEIDAFLK","ACDEFIJL":"CJEDAFLI","ACDEFIJK":"CJEDAFIK","ACDEFHKL":"HEFCADLK","ACDEFHJL":"HJFCADLE","ACDEFHJK":"HJECAFDK","ACDEFHIL":"HEFCADLI","ACDEFHIK":"HEFCADIK","ACDEFHIJ":"HJECAFDI","ACDEFGKL":"CGEDAFLK","ACDEFGJL":"CGJDAFLE","ACDEFGJK":"CGJDAFEK","ACDEFGIL":"CGEDAFLI","ACDEFGIK":"CGEDAFIK","ACDEFGIJ":"CGJDAFEI","ACDEFGHL":"HGFCADLE","ACDEFGHK":"HGECAFDK","ACDEFGHJ":"HGJCAFDE","ACDEFGHI":"HGECAFDI","ABGHIJKL":"HJBAIGLK","ABFHIJKL":"HJBAIFLK","ABFGIJKL":"IJBFAGLK","ABFGHJKL":"HJBFAGLK","ABFGHIKL":"HGBAIFLK","ABFGHIJL":"HJBFAGLI","ABFGHIJK":"HJBFAGIK","ABEHIJKL":"EJBAIHLK","ABEGIJKL":"EJBAIGLK","ABEGHJKL":"EJBAHGLK","ABEGHIKL":"EGBAIHLK","ABEGHIJL":"EJBAHGLI","ABEGHIJK":"EJBAHGIK","ABEFIJKL":"EJBAIFLK","ABEFHJKL":"EJBFAHLK","ABEFHIKL":"EIBFAHLK","ABEFHIJL":"EJBFAHLI","ABEFHIJK":"EJBFAHIK","ABEFGJKL":"EJBFAGLK","ABEFGIKL":"EGBAIFLK","ABEFGIJL":"EJBFAGLI","ABEFGIJK":"EJBFAGIK","ABEFGHKL":"EGBFAHLK","ABEFGHJL":"HJBFAGLE","ABEFGHJK":"HJBFAGEK","ABEFGHIL":"EGBFAHLI","ABEFGHIK":"EGBFAHIK","ABEFGHIJ":"HJBFAGEI","ABDHIJKL":"IJBDAHLK","ABDGIJKL":"IJBDAGLK","ABDGHJKL":"HJBDAGLK","ABDGHIKL":"IGBDAHLK","ABDGHIJL":"HJBDAGLI","ABDGHIJK":"HJBDAGIK","ABDFIJKL":"IJBDAFLK","ABDFHJKL":"HJBDAFLK","ABDFHIKL":"HIBDAFLK","ABDFHIJL":"HJBDAFLI","ABDFHIJK":"HJBDAFIK","ABDFGJKL":"FJBDAGLK","ABDFGIKL":"IGBDAFLK","ABDFGIJL":"FJBDAGLI","ABDFGIJK":"FJBDAGIK","ABDFGHKL":"HGBDAFLK","ABDFGHJL":"HGBDAFLJ","ABDFGHJK":"HGBDAFJK","ABDFGHIL":"HGBDAFLI","ABDFGHIK":"HGBDAFIK","ABDFGHIJ":"HGBDAFIJ","ABDEIJKL":"EJBAIDLK","ABDEHJKL":"EJBDAHLK","ABDEHIKL":"EIBDAHLK","ABDEHIJL":"EJBDAHLI","ABDEHIJK":"EJBDAHIK","ABDEGJKL":"EJBDAGLK","ABDEGIKL":"EGBAIDLK","ABDEGIJL":"EJBDAGLI","ABDEGIJK":"EJBDAGIK","ABDEGHKL":"EGBDAHLK","ABDEGHJL":"HJBDAGLE","ABDEGHJK":"HJBDAGEK","ABDEGHIL":"EGBDAHLI","ABDEGHIK":"EGBDAHIK","ABDEGHIJ":"HJBDAGEI","ABDEFJKL":"EJBDAFLK","ABDEFIKL":"EIBDAFLK","ABDEFIJL":"EJBDAFLI","ABDEFIJK":"EJBDAFIK","ABDEFHKL":"HEBDAFLK","ABDEFHJL":"HJBDAFLE","ABDEFHJK":"HJBDAFEK","ABDEFHIL":"HEBDAFLI","ABDEFHIK":"HEBDAFIK","ABDEFHIJ":"HJBDAFEI","ABDEFGKL":"EGBDAFLK","ABDEFGJL":"EGBDAFLJ","ABDEFGJK":"EGBDAFJK","ABDEFGIL":"EGBDAFLI","ABDEFGIK":"EGBDAFIK","ABDEFGIJ":"EGBDAFIJ","ABDEFGHL":"HGBDAFLE","ABDEFGHK":"HGBDAFEK","ABDEFGHJ":"HGBDAFEJ","ABDEFGHI":"HGBDAFEI","ABCHIJKL":"IJBCAHLK","ABCGIJKL":"IJBCAGLK","ABCGHJKL":"HJBCAGLK","ABCGHIKL":"IGBCAHLK","ABCGHIJL":"HJBCAGLI","ABCGHIJK":"HJBCAGIK","ABCFIJKL":"IJBCAFLK","ABCFHJKL":"HJBCAFLK","ABCFHIKL":"HIBCAFLK","ABCFHIJL":"HJBCAFLI","ABCFHIJK":"HJBCAFIK","ABCFGJKL":"CJBFAGLK","ABCFGIKL":"IGBCAFLK","ABCFGIJL":"CJBFAGLI","ABCFGIJK":"CJBFAGIK","ABCFGHKL":"HGBCAFLK","ABCFGHJL":"HGBCAFLJ","ABCFGHJK":"HGBCAFJK","ABCFGHIL":"HGBCAFLI","ABCFGHIK":"HGBCAFIK","ABCFGHIJ":"HGBCAFIJ","ABCEIJKL":"EJBAICLK","ABCEHJKL":"EJBCAHLK","ABCEHIKL":"EIBCAHLK","ABCEHIJL":"EJBCAHLI","ABCEHIJK":"EJBCAHIK","ABCEGJKL":"EJBCAGLK","ABCEGIKL":"EGBAICLK","ABCEGIJL":"EJBCAGLI","ABCEGIJK":"EJBCAGIK","ABCEGHKL":"EGBCAHLK","ABCEGHJL":"HJBCAGLE","ABCEGHJK":"HJBCAGEK","ABCEGHIL":"EGBCAHLI","ABCEGHIK":"EGBCAHIK","ABCEGHIJ":"HJBCAGEI","ABCEFJKL":"EJBCAFLK","ABCEFIKL":"EIBCAFLK","ABCEFIJL":"EJBCAFLI","ABCEFIJK":"EJBCAFIK","ABCEFHKL":"HEBCAFLK","ABCEFHJL":"HJBCAFLE","ABCEFHJK":"HJBCAFEK","ABCEFHIL":"HEBCAFLI","ABCEFHIK":"HEBCAFIK","ABCEFHIJ":"HJBCAFEI","ABCEFGKL":"EGBCAFLK","ABCEFGJL":"EGBCAFLJ","ABCEFGJK":"EGBCAFJK","ABCEFGIL":"EGBCAFLI","ABCEFGIK":"EGBCAFIK","ABCEFGIJ":"EGBCAFIJ","ABCEFGHL":"HGBCAFLE","ABCEFGHK":"HGBCAFEK","ABCEFGHJ":"HGBCAFEJ","ABCEFGHI":"HGBCAFEI","ABCDIJKL":"IJBCADLK","ABCDHJKL":"HJBCADLK","ABCDHIKL":"HIBCADLK","ABCDHIJL":"HJBCADLI","ABCDHIJK":"HJBCADIK","ABCDGJKL":"CJBDAGLK","ABCDGIKL":"IGBCADLK","ABCDGIJL":"CJBDAGLI","ABCDGIJK":"CJBDAGIK","ABCDGHKL":"HGBCADLK","ABCDGHJL":"HGBCADLJ","ABCDGHJK":"HGBCADJK","ABCDGHIL":"HGBCADLI","ABCDGHIK":"HGBCADIK","ABCDGHIJ":"HGBCADIJ","ABCDFJKL":"CJBDAFLK","ABCDFIKL":"CIBDAFLK","ABCDFIJL":"CJBDAFLI","ABCDFIJK":"CJBDAFIK","ABCDFHKL":"HFBCADLK","ABCDFHJL":"CJBDAFLH","ABCDFHJK":"HJBCAFDK","ABCDFHIL":"HFBCADLI","ABCDFHIK":"HFBCADIK","ABCDFHIJ":"HJBCAFDI","ABCDFGKL":"CGBDAFLK","ABCDFGJL":"CGBDAFLJ","ABCDFGJK":"CGBDAFJK","ABCDFGIL":"CGBDAFLI","ABCDFGIK":"CGBDAFIK","ABCDFGIJ":"CGBDAFIJ","ABCDFGHL":"CGBDAFLH","ABCDFGHK":"HGBCAFDK","ABCDFGHJ":"HGBCAFDJ","ABCDFGHI":"HGBCAFDI","ABCDEJKL":"EJBCADLK","ABCDEIKL":"EIBCADLK","ABCDEIJL":"EJBCADLI","ABCDEIJK":"EJBCADIK","ABCDEHKL":"HEBCADLK","ABCDEHJL":"HJBCADLE","ABCDEHJK":"HJBCADEK","ABCDEHIL":"HEBCADLI","ABCDEHIK":"HEBCADIK","ABCDEHIJ":"HJBCADEI","ABCDEGKL":"EGBCADLK","ABCDEGJL":"EGBCADLJ","ABCDEGJK":"EGBCADJK","ABCDEGIL":"EGBCADLI","ABCDEGIK":"EGBCADIK","ABCDEGIJ":"EGBCADIJ","ABCDEGHL":"HGBCADLE","ABCDEGHK":"HGBCADEK","ABCDEGHJ":"HGBCADEJ","ABCDEGHI":"HGBCADEI","ABCDEFKL":"CEBDAFLK","ABCDEFJL":"CJBDAFLE","ABCDEFJK":"CJBDAFEK","ABCDEFIL":"CEBDAFLI","ABCDEFIK":"CEBDAFIK","ABCDEFIJ":"CJBDAFEI","ABCDEFHL":"HFBCADLE","ABCDEFHK":"HEBCAFDK","ABCDEFHJ":"HJBCAFDE","ABCDEFHI":"HEBCAFDI","ABCDEFGL":"CGBDAFLE","ABCDEFGK":"CGBDAFEK","ABCDEFGJ":"CGBDAFEJ","ABCDEFGI":"CGBDAFEI","ABCDEFGH":"HGBCAFDE"};
+// FIFA Annex C slot column order (winners of these groups face a best-3rd team)
+const SLOT_ORDER = ['A','B','D','E','G','I','K','L'];
+
 // ---------- simulation engine ----------
 function matchProbs(eloA, eloB){
   const d = eloA - eloB;
@@ -452,6 +471,14 @@ function simKnockoutMatch(eloA, eloB){
   return 'B';
 }
 
+// Probability that A advances past B in a knockout tie, mirroring simKnockoutMatch:
+// wins in normal/extra time (pA) plus draws (pD) resolved on penalties (shootoutA).
+function advanceProb(eloA, eloB){
+  const {pA,pD,eA} = matchProbs(eloA,eloB);
+  const shootoutA = 0.5 + (eA-0.5)*0.2;
+  return pA + pD*shootoutA;
+}
+
 function simulateGroupFinal(g){
   const teams = GROUPS[g];
   const rec = {};
@@ -474,101 +501,126 @@ function simulateGroupFinal(g){
   return {order, rec};
 }
 
-function buildR32(groupResults){
-  const winners=[], runnersUp=[], thirds=[];
-  Object.keys(groupResults).forEach(g=>{
-    const {order, rec} = groupResults[g];
-    winners.push({team:order[0], group:g});
-    runnersUp.push({team:order[1], group:g});
-    const t3 = order[2];
-    thirds.push({team:t3, group:g, pts:rec[t3].pts, gd:rec[t3].gf-rec[t3].ga, gf:rec[t3].gf});
+// Build the Round of 32 as 16 matches, ordered so that pairing consecutive
+// winners reproduces FIFA's exact bracket tree (R16 -> QF -> SF -> Final).
+// thirdBySlot maps each winner-slot (A,B,D,E,G,I,K,L) to its assigned 3rd-place team.
+function buildBracketR32(winners, runnersUp, thirdBySlot){
+  const W = g=>winners[g], R = g=>runnersUp[g], T = s=>thirdBySlot[s];
+  return [
+    [W('E'), T('E')],   // M74
+    [W('I'), T('I')],   // M77
+    [R('A'), R('B')],   // M73
+    [W('F'), R('C')],   // M75
+    [R('K'), R('L')],   // M83
+    [W('H'), R('J')],   // M84
+    [W('D'), T('D')],   // M81
+    [W('G'), T('G')],   // M82
+    [W('C'), R('F')],   // M76
+    [R('E'), R('I')],   // M78
+    [W('A'), T('A')],   // M79
+    [W('L'), T('L')],   // M80
+    [W('J'), R('H')],   // M86
+    [R('D'), R('G')],   // M88
+    [W('B'), T('B')],   // M85
+    [W('K'), T('K')],   // M87
+  ];
+}
+
+// Resolve the 8 best third-placed teams into bracket slots via FIFA Annex C.
+function assignThirds(qualThirds){
+  const qualGroups = qualThirds.map(t=>t.group).sort();
+  const key = qualGroups.join('');
+  const assign = ANNEX_C[key]; // 8 chars, order A,B,D,E,G,I,K,L
+  const teamByGroup = {};
+  qualThirds.forEach(t=>{ teamByGroup[t.group] = t.team; });
+  const thirdBySlot = {};
+  for(let i=0;i<8;i++){ thirdBySlot[SLOT_ORDER[i]] = teamByGroup[assign[i]]; }
+  return thirdBySlot;
+}
+
+function runTrial(needTrace){
+  const groupRank = {}; // team -> finishing position 1..4 in its group
+  const groupPts = {};  // team -> final group points this trial
+  const groupGD = {};   // team -> final group goal difference this trial
+  const winners = {}, runnersUp = {};
+  const thirds = [];
+  Object.keys(GROUPS).forEach(g=>{
+    const res = simulateGroupFinal(g); // simulates this group's REMAINING fixtures too
+    res.order.forEach((t,i)=>{
+      groupRank[t]=i+1;
+      groupPts[t]=res.rec[t].pts;
+      groupGD[t]=res.rec[t].gf-res.rec[t].ga;
+    });
+    winners[g]   = res.order[0];
+    runnersUp[g] = res.order[1];
+    const t3 = res.order[2];
+    thirds.push({team:t3, group:g, pts:res.rec[t3].pts, gd:res.rec[t3].gf-res.rec[t3].ga, gf:res.rec[t3].gf});
   });
+  // rank all 12 third-placed teams; best 8 advance (FIFA tiebreak: pts, GD, GF, then random for unresolved)
   thirds.sort((a,b)=> b.pts-a.pts || b.gd-a.gd || b.gf-a.gf || (Math.random()-0.5));
   const qualThirds = thirds.slice(0,8);
 
-  const r32 = [];
-  const usedWinners = new Set();
-  const usedRunners = new Set();
-
-  qualThirds.forEach((t3, idx)=>{
-    for(let offset=0; offset<winners.length; offset++){
-      const cand = winners[(idx+offset)%winners.length];
-      if(!usedWinners.has(cand.team) && cand.group!==t3.group){
-        r32.push([cand.team, t3.team]);
-        usedWinners.add(cand.team);
-        break;
-      }
-    }
-  });
-
-  const remWinners = winners.filter(w=>!usedWinners.has(w.team));
-  remWinners.forEach((w, idx)=>{
-    for(let offset=0; offset<runnersUp.length; offset++){
-      const cand = runnersUp[(idx+offset)%runnersUp.length];
-      if(!usedRunners.has(cand.team) && cand.group!==w.group){
-        r32.push([w.team, cand.team]);
-        usedRunners.add(cand.team);
-        break;
-      }
-    }
-  });
-
-  const remRunners = runnersUp.filter(r=>!usedRunners.has(r.team));
-  for(let i=0;i<remRunners.length;i+=2){
-    if(remRunners[i+1]) r32.push([remRunners[i].team, remRunners[i+1].team]);
-  }
-  return r32;
-}
-
-function runTrial(){
-  const groupResults = {};
-  const groupRank = {}; // team -> finishing position 1..4 in its group
-  Object.keys(GROUPS).forEach(g=>{
-    groupResults[g] = simulateGroupFinal(g);
-    groupResults[g].order.forEach((t,i)=>{ groupRank[t]=i+1; });
-  });
-  const r32 = buildR32(groupResults);
+  const thirdBySlot = assignThirds(qualThirds);
+  const r32 = buildBracketR32(winners, runnersUp, thirdBySlot);
 
   const progression = {};
-  r32.forEach(([a,b])=>{ progression[a]=Math.max(progression[a]||0,1); progression[b]=Math.max(progression[b]||0,1); });
+  r32.forEach(([a,b])=>{ progression[a]=1; progression[b]=1; });
 
-  let current = r32;
-  let level = 1;
-  while(current.length>0){
-    const nextWinners=[];
-    current.forEach(([a,b])=>{
+  // rounds trace recorded only when needed (so the hot loop stays fast otherwise)
+  const rounds = needTrace ? [] : null;
+  let current = r32, level = 1, champion = null;
+  while(true){
+    const ws = [];
+    const matchObjs = needTrace ? [] : null;
+    for(const [a,b] of current){
       const w = simKnockoutMatch(eloMap[a], eloMap[b])==='A' ? a : b;
-      nextWinners.push(w);
-    });
+      ws.push(w);
+      if(needTrace) matchObjs.push({a, b, winner:w});
+    }
+    if(needTrace) rounds.push(matchObjs);
     level++;
-    nextWinners.forEach(t=>{ progression[t]=Math.max(progression[t]||0, level); });
-    if(nextWinners.length===1) break;
+    for(const t of ws) progression[t]=level;
+    if(ws.length===1){ champion = ws[0]; break; }
     const next=[];
-    for(let i=0;i<nextWinners.length;i+=2){ next.push([nextWinners[i], nextWinners[i+1]]); }
+    for(let i=0;i<ws.length;i+=2) next.push([ws[i], ws[i+1]]);
     current = next;
   }
-  return {progression, groupRank};
+  return {progression, groupRank, groupPts, groupGD, champion, rounds};
 }
 
 // peak progression level -> exit-round label index
 // level: 0 group exit, 1 R32 (lost in R32), 2 R16, 3 QF, 4 SF, 5 Final (runner-up), 6 Champion
 const EXIT_LABELS = ["Group stage","Round of 32","Round of 16","Quarter-finals","Semi-finals","Final (runner-up)","Champion"];
 
+// teams for which we keep the first full simulated run where they become champion
+const SCENARIO_TEAMS = ['Netherlands','Belgium'];
+
 function makeAccumulator(){
-  const prog = {}, rankCounts = {}, exitCounts = {};
+  const prog = {}, rankCounts = {}, exitCounts = {}, ptsSum = {}, gdSum = {};
   Object.keys(TEAMS).forEach(t=>{
     prog[t] = [0,0,0,0,0,0,0];
     rankCounts[t] = [0,0,0,0,0];
     exitCounts[t] = [0,0,0,0,0,0,0];
+    ptsSum[t] = 0;
+    gdSum[t] = 0;
   });
-  return {prog, rankCounts, exitCounts};
+  return {prog, rankCounts, exitCounts, ptsSum, gdSum, capture:{}};
 }
 
 function runChunk(acc, n){
-  const {prog, rankCounts, exitCounts} = acc;
+  const {prog, rankCounts, exitCounts, ptsSum, gdSum, capture} = acc;
   for(let i=0;i<n;i++){
-    const {progression, groupRank} = runTrial();
-    Object.keys(groupRank).forEach(t=>{ rankCounts[t][groupRank[t]]++; });
+    // only build the bracket trace while a wanted scenario is still uncaptured
+    const needTrace = SCENARIO_TEAMS.some(t=>!capture[t]);
+    const {progression, groupRank, groupPts, groupGD, champion, rounds} = runTrial(needTrace);
+    if(needTrace && rounds && SCENARIO_TEAMS.includes(champion) && !capture[champion]){
+      capture[champion] = rounds; // first full run (groups + knockout) this team wins
+    }
+    Object.keys(groupRank).forEach(t=>{
+      rankCounts[t][groupRank[t]]++;
+      ptsSum[t] += groupPts[t];
+      gdSum[t]  += groupGD[t];
+    });
     Object.keys(TEAMS).forEach(t=>{
       const lvl = progression[t]||0;
       prog[t][lvl]++;
@@ -578,7 +630,7 @@ function runChunk(acc, n){
 }
 
 function finalizeAccumulator(acc, total){
-  const {prog, rankCounts, exitCounts} = acc;
+  const {prog, rankCounts, exitCounts, ptsSum, gdSum} = acc;
   const out = {};
   Object.keys(TEAMS).forEach(t=>{
     const c = prog[t];
@@ -594,7 +646,9 @@ function finalizeAccumulator(acc, total){
       r32:cum(1), r16:cum(2), qf:cum(3), sf:cum(4), f:cum(5), champ:cum(6),
       modalRank:bestRank, modalRankPct:bestRankN/total*100,
       modalExit:bestExit, modalExitPct:bestExitN/total*100,
-      avgLevel:avgLevel
+      avgLevel:avgLevel,
+      avgPts:ptsSum[t]/total, avgGD:gdSum[t]/total,
+      rankPct:[0, rc[1]/total*100, rc[2]/total*100, rc[3]/total*100, rc[4]/total*100]
     };
   });
   return out;
@@ -618,13 +672,14 @@ function runSimulationChunked(n, onProgress, onDone){
     done += take;
     if(onProgress) onProgress(done, n);
     if(done<n){ setTimeout(step, 0); }
-    else { onDone(finalizeAccumulator(acc, n)); }
+    else { onDone(finalizeAccumulator(acc, n), acc.capture); }
   }
   setTimeout(step, 0);
 }
 
 // ---------- results table ----------
 let lastResults = null;
+let lastCapture = {}; // first full simulated run where each SCENARIO_TEAMS member wins
 let sortKey = 'champ';
 
 function renderResults(){
@@ -652,51 +707,186 @@ document.querySelectorAll('.results-table th[data-k]').forEach(th=>{
   th.addEventListener('click', ()=>{ sortKey = th.dataset.k; renderResults(); });
 });
 
-// ---------- most likely group rankings ----------
+// ---------- projected group rankings (always a clean 1st-4th order) ----------
 const ORD = ['','1st','2nd','3rd','4th'];
+
+// Deterministic projected finishing order for a group: by average points, then
+// average goal difference (matching FIFA's group tiebreak hierarchy). Returns the
+// four team names in projected order [1st, 2nd, 3rd, 4th].
+function projectedGroupOrder(g){
+  return GROUPS[g].slice().sort((a,b)=>
+    lastResults[b].avgPts - lastResults[a].avgPts ||
+    lastResults[b].avgGD  - lastResults[a].avgGD  ||
+    eloMap[b] - eloMap[a]
+  );
+}
+
 function renderRankings(){
   if(!lastResults) return;
   const grid = document.getElementById('rankingsGrid');
   grid.innerHTML='';
   Object.keys(GROUPS).forEach(g=>{
-    // order teams by avgLevel desc so the most-likely-to-progress sit on top,
-    // then present each with its modal finishing position
-    const teams = GROUPS[g].slice().sort((a,b)=> lastResults[b].avgLevel - lastResults[a].avgLevel);
+    const order = projectedGroupOrder(g);
     const box = document.createElement('div');
     box.className='group-card';
-    const rows = teams.map(t=>{
+    const rows = order.map((t,i)=>{
+      const pos = i+1;
       const r = lastResults[t];
-      return `<tr><td class="team">${t}</td><td>${ORD[r.modalRank]}</td><td>${r.modalRankPct.toFixed(0)}%</td></tr>`;
+      // share = probability the team actually finishes in this projected position
+      return `<tr><td class="team">${t}</td><td>${ORD[pos]}</td><td>${r.rankPct[pos].toFixed(0)}%</td></tr>`;
     }).join('');
     box.innerHTML = `
       <h3>Group ${g}</h3>
       <table class="gtable">
-        <thead><tr><th>Team</th><th>Most likely</th><th>Share</th></tr></thead>
+        <thead><tr><th>Team</th><th>Projected</th><th>Share</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>`;
     grid.appendChild(box);
   });
 }
 
-// ---------- most likely exit round ----------
-function renderExits(){
-  if(!lastResults) return;
-  const rows = Object.keys(lastResults).map(t=>({
-    team:t, group:Object.keys(GROUPS).find(g=>GROUPS[g].includes(t)), ...lastResults[t]
-  }));
-  // sort by modal exit depth, then by avg depth as tiebreak
-  rows.sort((a,b)=> b.modalExit-a.modalExit || b.avgLevel-a.avgLevel);
-  const body = document.getElementById('exitBody');
-  body.innerHTML = rows.map(r=>{
-    return `<tr>
-      <td class="team">${r.team}</td>
-      <td>${r.group}</td>
-      <td style="text-align:left;">${EXIT_LABELS[r.modalExit]}</td>
-      <td>${r.modalExitPct.toFixed(0)}%</td>
-      <td>${r.avgLevel.toFixed(2)}</td>
-    </tr>`;
-  }).join('');
+// ---------- projected knockout bracket (true two-sided bracket) ----------
+// Fixed projected Round of 32 (16 pairs) from the simulation aggregates.
+// Identical field is reused by the projected bracket and the scenario brackets.
+function buildProjectedR32(){
+  const winners={}, runnersUp={}, thirds=[];
+  Object.keys(GROUPS).forEach(g=>{
+    const order = projectedGroupOrder(g);
+    winners[g]=order[0]; runnersUp[g]=order[1];
+    thirds.push({team:order[2], group:g});
+  });
+  thirds.sort((a,b)=>
+    lastResults[b.team].avgPts - lastResults[a.team].avgPts ||
+    lastResults[b.team].avgGD  - lastResults[a.team].avgGD  ||
+    eloMap[b.team] - eloMap[a.team]);
+  const thirdBySlot = assignThirds(thirds.slice(0,8));
+  return buildBracketR32(winners, runnersUp, thirdBySlot);
 }
+
+// Play a fixed R32 to a champion using pick(a,b)->winner. Returns rounds, each
+// match recording the actual winner and that winner's advance probability.
+function playoutTrace(r32, pick){
+  const rounds=[];
+  let current=r32;
+  while(true){
+    const matches = current.map(([a,b])=>{
+      const winner = pick(a,b);
+      const wp = winner===a ? advanceProb(eloMap[a],eloMap[b]) : advanceProb(eloMap[b],eloMap[a]);
+      return {a,b,winner,wp};
+    });
+    rounds.push(matches);
+    if(current.length===1) break;
+    const ws=matches.map(m=>m.winner);
+    const next=[]; for(let i=0;i<ws.length;i+=2) next.push([ws[i],ws[i+1]]);
+    current=next;
+  }
+  return rounds;
+}
+
+const PICK_FAVORITE = (a,b)=> advanceProb(eloMap[a],eloMap[b])>=0.5 ? a : b;
+const PICK_SIM      = (a,b)=> simKnockoutMatch(eloMap[a],eloMap[b])==='A' ? a : b;
+const escHtml = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+// Render a played-out bracket (rounds array) into a container as a two-sided SVG.
+function drawBracket(wrapId, rounds, bannerHtml){
+  const boxW=150, boxH=40, gap=46, topM=26, pitch0=72;
+  const colPitch = boxW+gap;
+  const ys=[[]];
+  for(let i=0;i<8;i++) ys[0][i]=topM + i*pitch0 + boxH/2;
+  for(let r=1;r<4;r++){ ys[r]=[]; const c=8>>r; for(let i=0;i<c;i++) ys[r][i]=(ys[r-1][2*i]+ys[r-1][2*i+1])/2; }
+  const centerY = ys[3][0];
+  const svgW = 9*boxW + 8*gap, svgH = topM*2 + 7*pitch0 + boxH, xF = 4*colPitch;
+  const LABELS = ['16TH FINALS','8TH FINALS','QUARTER-FINALS','SEMI-FINALS'];
+
+  const trunc = s => s.length>17 ? s.slice(0,16)+'…' : s;
+  const hL = (x1,y,x2)=>`<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="var(--border)" stroke-width="1.5"/>`;
+  const vL = (x,y1,y2)=>`<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="var(--border)" stroke-width="1.5"/>`;
+
+  function box(x, cy, m){
+    const top=cy-boxH/2, aWin=m.winner===m.a;
+    const ay=cy-boxH/4+4, by=cy+boxH/4+4;
+    const aFill=aWin?'var(--text)':'var(--muted)', bFill=aWin?'var(--muted)':'var(--text)';
+    const aW=aWin?'600':'400', bW=aWin?'400':'600';
+    const pct=(m.wp*100).toFixed(0)+'%';
+    // true upset (winner had <50%) in loss-red; close call (<58%) in amber; else accent
+    const pctFill = m.wp<0.50?'var(--loss)' : (m.wp<0.58?'var(--draw)':'var(--accent)');
+    const winY=aWin?ay:by;
+    return `<rect x="${x}" y="${top}" width="${boxW}" height="${boxH}" rx="5" fill="var(--surface)" stroke="var(--border)"/>`
+      + `<line x1="${x}" y1="${cy}" x2="${x+boxW}" y2="${cy}" stroke="var(--border)" stroke-width="0.5"/>`
+      + `<text x="${x+8}" y="${ay}" font-size="11" font-family="DM Sans, sans-serif" fill="${aFill}" font-weight="${aW}">${escHtml(trunc(m.a))}</text>`
+      + `<text x="${x+8}" y="${by}" font-size="11" font-family="DM Sans, sans-serif" fill="${bFill}" font-weight="${bW}">${escHtml(trunc(m.b))}</text>`
+      + `<text x="${x+boxW-7}" y="${winY}" font-size="10" font-family="DM Mono, monospace" text-anchor="end" fill="${pctFill}">${pct}</text>`;
+  }
+
+  const p=[];
+  for(let r=0;r<4;r++){
+    p.push(`<text x="${r*colPitch}" y="16" font-size="10" font-family="DM Mono, monospace" letter-spacing="0.5" fill="var(--accent2)">${LABELS[r]}</text>`);
+    p.push(`<text x="${(8-r)*colPitch+boxW}" y="16" text-anchor="end" font-size="10" font-family="DM Mono, monospace" letter-spacing="0.5" fill="var(--accent2)">${LABELS[r]}</text>`);
+  }
+  p.push(`<text x="${xF+boxW/2}" y="16" text-anchor="middle" font-size="10" font-family="DM Mono, monospace" letter-spacing="0.5" fill="var(--gold)">FINAL</text>`);
+
+  for(let r=0;r<4;r++){
+    const c=8>>r, x=r*colPitch;
+    for(let i=0;i<c;i++) p.push(box(x, ys[r][i], rounds[r][i]));
+    if(r<3){
+      const xr=x+boxW, midX=xr+gap/2, nextX=(r+1)*colPitch;
+      for(let i=0;i<(c>>1);i++){
+        const y0=ys[r][2*i], y1=ys[r][2*i+1], yn=ys[r+1][i];
+        p.push(hL(xr,y0,midX), hL(xr,y1,midX), vL(midX,y0,y1), hL(midX,yn,nextX));
+      }
+    }
+  }
+  for(let r=0;r<4;r++){
+    const c=8>>r, x=(8-r)*colPitch;
+    for(let i=0;i<c;i++) p.push(box(x, ys[r][i], rounds[r][c+i]));
+    if(r<3){
+      const xl=x, midX=xl-gap/2, nextX=(8-(r+1))*colPitch+boxW;
+      for(let i=0;i<(c>>1);i++){
+        const y0=ys[r][2*i], y1=ys[r][2*i+1], yn=ys[r+1][i];
+        p.push(hL(xl,y0,midX), hL(xl,y1,midX), vL(midX,y0,y1), hL(midX,yn,nextX));
+      }
+    }
+  }
+  p.push(hL(3*colPitch+boxW, centerY, xF));
+  p.push(hL(xF+boxW, centerY, 5*colPitch));
+  p.push(box(xF, centerY, rounds[4][0]));
+
+  const svg = `<svg width="${svgW}" height="${svgH}" viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg">${p.join('')}</svg>`;
+  document.getElementById(wrapId).innerHTML = `<div class="bracket-scroll">${svg}</div>` + bannerHtml;
+}
+
+// Projected bracket: favorites always advance.
+function renderBracket(){
+  if(!lastResults) return;
+  const rounds = playoutTrace(buildProjectedR32(), PICK_FAVORITE);
+  const champ = rounds[rounds.length-1][0].winner;
+  drawBracket('bracketWrap', rounds,
+    `<div class="bracket-champion">Projected champion: <span>${escHtml(champ)}</span></div>`);
+}
+
+// Scenario bracket: same projected field, but winners taken from a real simulated
+// run in which `team` becomes champion (so the path includes the upsets it needs).
+function renderScenarioBracket(team, wrapId){
+  const captured = lastCapture[team];
+  if(!captured){
+    document.getElementById(wrapId).innerHTML =
+      `<div class="bracket-note">No simulated run in this batch ended with ${escHtml(team)} as champions, so there's no path to show. They win rarely enough that a larger run (more trials) is likely to surface one.</div>`;
+    return;
+  }
+  // Captured rounds hold {a,b,winner} as they actually fell. Attach each winner's
+  // model probability (incl. penalties) for display.
+  const rounds = captured.map(rd => rd.map(m=>{
+    const wp = m.winner===m.a ? advanceProb(eloMap[m.a],eloMap[m.b]) : advanceProb(eloMap[m.b],eloMap[m.a]);
+    return {a:m.a, b:m.b, winner:m.winner, wp};
+  }));
+  // upsets along the champion's own run (their wins where they were the underdog)
+  let upsets=0;
+  rounds.forEach(rd=>{ const m = rd.find(x=>x.winner===team); if(m && m.wp<0.50) upsets++; });
+  drawBracket(wrapId, rounds,
+    `<div class="bracket-champion">${escHtml(team)} lift the trophy <span>— winning ${upsets} game${upsets===1?'':'s'} as the underdog</span></div>`);
+}
+
+// ---------- run handler ----------
 
 document.getElementById('runBtn').addEventListener('click', ()=>{
   readEloFromInputs();
@@ -706,7 +896,9 @@ document.getElementById('runBtn').addEventListener('click', ()=>{
   btn.disabled = true;
   document.getElementById('resultsWrap').style.display='none';
   document.getElementById('rankings-section').style.display='none';
-  document.getElementById('exit-section').style.display='none';
+  document.getElementById('bracket-section').style.display='none';
+  document.getElementById('bracket-nl-section').style.display='none';
+  document.getElementById('bracket-be-section').style.display='none';
   const t0 = performance.now();
   status.textContent = 'Running ' + n.toLocaleString() + ' trials…';
   runSimulationChunked(n,
@@ -715,16 +907,21 @@ document.getElementById('runBtn').addEventListener('click', ()=>{
         status.textContent = `Running… ${Math.round(done/total*100)}% (${done.toLocaleString()} / ${total.toLocaleString()})`;
       }
     },
-    (results)=>{
+    (results, capture)=>{
       lastResults = results;
+      lastCapture = capture || {};
       const t1 = performance.now();
       status.textContent = `Done — ${n.toLocaleString()} trials in ${((t1-t0)/1000).toFixed(2)}s`;
       document.getElementById('resultsWrap').style.display='block';
       document.getElementById('rankings-section').style.display='block';
-      document.getElementById('exit-section').style.display='block';
+      document.getElementById('bracket-section').style.display='block';
+      document.getElementById('bracket-nl-section').style.display='block';
+      document.getElementById('bracket-be-section').style.display='block';
       renderResults();
       renderRankings();
-      renderExits();
+      renderBracket();
+      renderScenarioBracket('Netherlands', 'bracketWrapNL');
+      renderScenarioBracket('Belgium', 'bracketWrapBE');
       btn.disabled = false;
     }
   );
