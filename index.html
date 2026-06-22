@@ -152,13 +152,13 @@
       <h1>2026 WORLD <span>CUP</span> SIM</h1>
       <p>Monte Carlo Simulator · Live Edition</p>
     </div>
-    <div class="badge">Group results locked through Jun 19–21, 2026</div>
+    <div class="badge">Group results locked through Jun 21, 2026</div>
   </div>
 
   <section id="groups-section">
     <div class="section-label">Group Stage — Actual Results</div>
     <h2>Where things stand right now</h2>
-    <p class="sub">The records below are the real group-stage tables, built from official box scores through June 19–21 (plus Spain's confirmed 4–0 win over Saudi Arabia). Everything still on the schedule — including today's and this week's remaining matchday fixtures — is left for the simulator below to play out.</p>
+    <p class="sub">The records below are the real group-stage tables, built from official box scores through the night of June 21 — including Spain's 4–0 rout of Saudi Arabia, Egypt's 2–1 comeback over New Zealand, ten-man Belgium's frustrating 0–0 with Iran, and Uruguay's 2–2 with Cape Verde. Everything still on the schedule — today's June 22 fixtures and the rest of matchday 3 — is left for the simulator below to play out.</p>
     <div class="groups-grid" id="groupsGrid"></div>
     <div class="legend">
       <span class="l1">Through to Round of 32</span>
@@ -193,7 +193,9 @@
       <select id="trialCount">
         <option value="1000">1,000 trials (fast)</option>
         <option value="5000" selected>5,000 trials</option>
-        <option value="20000">20,000 trials (slower)</option>
+        <option value="20000">20,000 trials</option>
+        <option value="100000">100,000 trials (slower)</option>
+        <option value="1000000">1,000,000 trials (much slower)</option>
       </select>
       <button class="btn" id="runBtn">Run Simulation</button>
       <span class="sim-status" id="simStatus"></span>
@@ -212,6 +214,25 @@
     </div>
   </section>
 
+  <section id="rankings-section" style="display:none;">
+    <div class="section-label">Most Likely Group Finishes</div>
+    <h2>How each group is projected to end</h2>
+    <p class="sub">For every group, the simulator records each team's final position across all trials. Shown below is each team's single most likely finishing place (1st–4th), with the share of simulations that landed there in parentheses. The list order reflects the most common full ranking; a low percentage means that group is genuinely volatile.</p>
+    <div class="groups-grid" id="rankingsGrid"></div>
+  </section>
+
+  <section id="exit-section" style="display:none;">
+    <div class="section-label">Most Likely Exit Round</div>
+    <h2>Where each team's run is projected to end</h2>
+    <p class="sub">Across all trials, this tracks the round in which each team is eliminated (or crowned). The "most likely exit" is the single most common outcome for that team — its modal fate — with the share of simulations in parentheses. Sorted by how deep that modal exit is, so the projected contenders rise to the top.</p>
+    <table class="results-table" id="exitTable">
+      <thead>
+        <tr><th>Team</th><th>Grp</th><th style="text-align:left;cursor:default;">Most likely exit</th><th>Share</th><th>Avg. finish</th></tr>
+      </thead>
+      <tbody id="exitBody"></tbody>
+    </table>
+  </section>
+
   <footer>
     <p>
       Group-stage box scores sourced from CBS Sports' live standings page and FIFA.com match reports, current as of June 19–21, 2026. Elo ratings are estimates for simulation purposes, not an official ranking. Round of 32 bracket logic is a deliberate simplification of FIFA's real combinatorial assignment table for qualifying third-place teams — treat bracket paths as illustrative, not predictive of the actual draw. This is a personal project, not affiliated with FIFA.
@@ -228,8 +249,8 @@ const TEAMS = {
   "USA":1890, "Australia":1830, "Paraguay":1800, "Türkiye":1730,
   "Germany":2040, "Ivory Coast":1870, "Ecuador":1860, "Curaçao":1640,
   "Netherlands":2000, "Sweden":1870, "Japan":1910, "Tunisia":1790,
-  "New Zealand":1740, "Iran":1810, "Belgium":1980, "Egypt":1830,
-  "Saudi Arabia":1790, "Uruguay":1970, "Spain":2080, "Cape Verde":1700,
+  "New Zealand":1720, "Iran":1815, "Belgium":1960, "Egypt":1860,
+  "Saudi Arabia":1780, "Uruguay":1950, "Spain":2090, "Cape Verde":1720,
   "Norway":1880, "France":2090, "Senegal":1900, "Iraq":1730,
   "Argentina":2110, "Austria":1870, "Jordan":1690, "Algeria":1800,
   "Colombia":1960, "DR Congo":1740, "Portugal":2030, "Uzbekistan":1690,
@@ -271,11 +292,11 @@ const LOCKED = {
   "Netherlands":{w:1,d:1,l:0,gf:7,ga:3,pts:4}, "Japan":{w:1,d:1,l:0,gf:6,ga:2,pts:4},
   "Sweden":{w:1,d:0,l:1,gf:6,ga:6,pts:3}, "Tunisia":{w:0,d:0,l:2,gf:1,ga:9,pts:0},
 
-  "New Zealand":{w:0,d:1,l:0,gf:2,ga:2,pts:1}, "Iran":{w:0,d:1,l:0,gf:2,ga:2,pts:1},
-  "Belgium":{w:0,d:1,l:0,gf:1,ga:1,pts:1}, "Egypt":{w:0,d:1,l:0,gf:1,ga:1,pts:1},
+  "Iran":{w:0,d:2,l:0,gf:2,ga:2,pts:2}, "Belgium":{w:0,d:2,l:0,gf:1,ga:1,pts:2},
+  "Egypt":{w:1,d:1,l:0,gf:3,ga:2,pts:4}, "New Zealand":{w:0,d:1,l:1,gf:3,ga:4,pts:1},
 
   "Spain":{w:1,d:1,l:0,gf:4,ga:0,pts:4}, "Saudi Arabia":{w:0,d:1,l:1,gf:1,ga:5,pts:1},
-  "Uruguay":{w:0,d:1,l:0,gf:1,ga:1,pts:1}, "Cape Verde":{w:0,d:1,l:0,gf:0,ga:0,pts:1},
+  "Uruguay":{w:0,d:2,l:0,gf:3,ga:3,pts:2}, "Cape Verde":{w:0,d:2,l:0,gf:2,ga:2,pts:2},
 
   "France":{w:1,d:0,l:0,gf:3,ga:1,pts:3}, "Norway":{w:1,d:0,l:0,gf:4,ga:1,pts:3},
   "Senegal":{w:0,d:0,l:1,gf:1,ga:3,pts:0}, "Iraq":{w:0,d:0,l:1,gf:1,ga:4,pts:0},
@@ -297,8 +318,8 @@ const REMAINING = {
   D:[["Türkiye","USA"],["Paraguay","Australia"]],
   E:[["Ecuador","Germany"],["Curaçao","Ivory Coast"]],
   F:[["Japan","Sweden"],["Tunisia","Netherlands"]],
-  G:[["Belgium","Iran"],["New Zealand","Egypt"],["Egypt","Iran"],["New Zealand","Belgium"]],
-  H:[["Uruguay","Cape Verde"],["Cape Verde","Saudi Arabia"],["Uruguay","Spain"]],
+  G:[["Egypt","Iran"],["New Zealand","Belgium"]],
+  H:[["Cape Verde","Saudi Arabia"],["Uruguay","Spain"]],
   I:[["France","Iraq"],["Norway","Senegal"],["Norway","France"],["Senegal","Iraq"]],
   J:[["Argentina","Austria"],["Jordan","Algeria"],["Algeria","Austria"],["Jordan","Argentina"]],
   K:[["Portugal","Uzbekistan"],["Colombia","DR Congo"],["Colombia","Portugal"],["DR Congo","Uzbekistan"]],
@@ -501,7 +522,11 @@ function buildR32(groupResults){
 
 function runTrial(){
   const groupResults = {};
-  Object.keys(GROUPS).forEach(g=>{ groupResults[g] = simulateGroupFinal(g); });
+  const groupRank = {}; // team -> finishing position 1..4 in its group
+  Object.keys(GROUPS).forEach(g=>{
+    groupResults[g] = simulateGroupFinal(g);
+    groupResults[g].order.forEach((t,i)=>{ groupRank[t]=i+1; });
+  });
   const r32 = buildR32(groupResults);
 
   const progression = {};
@@ -522,25 +547,80 @@ function runTrial(){
     for(let i=0;i<nextWinners.length;i+=2){ next.push([nextWinners[i], nextWinners[i+1]]); }
     current = next;
   }
-  return progression;
+  return {progression, groupRank};
 }
 
-function runSimulation(n){
-  const counts = {};
-  Object.keys(TEAMS).forEach(t=>{ counts[t] = [0,0,0,0,0,0,0]; }); // index by level 0..6
+// peak progression level -> exit-round label index
+// level: 0 group exit, 1 R32 (lost in R32), 2 R16, 3 QF, 4 SF, 5 Final (runner-up), 6 Champion
+const EXIT_LABELS = ["Group stage","Round of 32","Round of 16","Quarter-finals","Semi-finals","Final (runner-up)","Champion"];
+
+function makeAccumulator(){
+  const prog = {}, rankCounts = {}, exitCounts = {};
+  Object.keys(TEAMS).forEach(t=>{
+    prog[t] = [0,0,0,0,0,0,0];
+    rankCounts[t] = [0,0,0,0,0];
+    exitCounts[t] = [0,0,0,0,0,0,0];
+  });
+  return {prog, rankCounts, exitCounts};
+}
+
+function runChunk(acc, n){
+  const {prog, rankCounts, exitCounts} = acc;
   for(let i=0;i<n;i++){
-    const prog = runTrial();
-    Object.keys(prog).forEach(t=>{ counts[t][prog[t]]++; });
+    const {progression, groupRank} = runTrial();
+    Object.keys(groupRank).forEach(t=>{ rankCounts[t][groupRank[t]]++; });
+    Object.keys(TEAMS).forEach(t=>{
+      const lvl = progression[t]||0;
+      prog[t][lvl]++;
+      exitCounts[t][lvl]++;
+    });
   }
+}
+
+function finalizeAccumulator(acc, total){
+  const {prog, rankCounts, exitCounts} = acc;
   const out = {};
   Object.keys(TEAMS).forEach(t=>{
-    const c = counts[t];
-    const cum = lvl => {
-      let s=0; for(let k=lvl;k<=6;k++) s+=c[k]; return s/n*100;
+    const c = prog[t];
+    const cum = lvl => { let s=0; for(let k=lvl;k<=6;k++) s+=c[k]; return s/total*100; };
+    const rc = rankCounts[t];
+    let bestRank=1, bestRankN=rc[1];
+    for(let r=2;r<=4;r++){ if(rc[r]>bestRankN){ bestRankN=rc[r]; bestRank=r; } }
+    const ec = exitCounts[t];
+    let bestExit=0, bestExitN=ec[0];
+    for(let l=1;l<=6;l++){ if(ec[l]>bestExitN){ bestExitN=ec[l]; bestExit=l; } }
+    let avgLevel=0; for(let l=0;l<=6;l++){ avgLevel += l*ec[l]; } avgLevel/=total;
+    out[t] = {
+      r32:cum(1), r16:cum(2), qf:cum(3), sf:cum(4), f:cum(5), champ:cum(6),
+      modalRank:bestRank, modalRankPct:bestRankN/total*100,
+      modalExit:bestExit, modalExitPct:bestExitN/total*100,
+      avgLevel:avgLevel
     };
-    out[t] = { r32:cum(1), r16:cum(2), qf:cum(3), sf:cum(4), f:cum(5), champ:cum(6) };
   });
   return out;
+}
+
+// synchronous version retained for quick runs / testing
+function runSimulation(n){
+  const acc = makeAccumulator();
+  runChunk(acc, n);
+  return finalizeAccumulator(acc, n);
+}
+
+// chunked async version keeps the UI responsive on large runs
+function runSimulationChunked(n, onProgress, onDone){
+  const acc = makeAccumulator();
+  const chunk = n>=100000 ? 25000 : n;
+  let done = 0;
+  function step(){
+    const take = Math.min(chunk, n-done);
+    runChunk(acc, take);
+    done += take;
+    if(onProgress) onProgress(done, n);
+    if(done<n){ setTimeout(step, 0); }
+    else { onDone(finalizeAccumulator(acc, n)); }
+  }
+  setTimeout(step, 0);
 }
 
 // ---------- results table ----------
@@ -572,20 +652,82 @@ document.querySelectorAll('.results-table th[data-k]').forEach(th=>{
   th.addEventListener('click', ()=>{ sortKey = th.dataset.k; renderResults(); });
 });
 
+// ---------- most likely group rankings ----------
+const ORD = ['','1st','2nd','3rd','4th'];
+function renderRankings(){
+  if(!lastResults) return;
+  const grid = document.getElementById('rankingsGrid');
+  grid.innerHTML='';
+  Object.keys(GROUPS).forEach(g=>{
+    // order teams by avgLevel desc so the most-likely-to-progress sit on top,
+    // then present each with its modal finishing position
+    const teams = GROUPS[g].slice().sort((a,b)=> lastResults[b].avgLevel - lastResults[a].avgLevel);
+    const box = document.createElement('div');
+    box.className='group-card';
+    const rows = teams.map(t=>{
+      const r = lastResults[t];
+      return `<tr><td class="team">${t}</td><td>${ORD[r.modalRank]}</td><td>${r.modalRankPct.toFixed(0)}%</td></tr>`;
+    }).join('');
+    box.innerHTML = `
+      <h3>Group ${g}</h3>
+      <table class="gtable">
+        <thead><tr><th>Team</th><th>Most likely</th><th>Share</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+    grid.appendChild(box);
+  });
+}
+
+// ---------- most likely exit round ----------
+function renderExits(){
+  if(!lastResults) return;
+  const rows = Object.keys(lastResults).map(t=>({
+    team:t, group:Object.keys(GROUPS).find(g=>GROUPS[g].includes(t)), ...lastResults[t]
+  }));
+  // sort by modal exit depth, then by avg depth as tiebreak
+  rows.sort((a,b)=> b.modalExit-a.modalExit || b.avgLevel-a.avgLevel);
+  const body = document.getElementById('exitBody');
+  body.innerHTML = rows.map(r=>{
+    return `<tr>
+      <td class="team">${r.team}</td>
+      <td>${r.group}</td>
+      <td style="text-align:left;">${EXIT_LABELS[r.modalExit]}</td>
+      <td>${r.modalExitPct.toFixed(0)}%</td>
+      <td>${r.avgLevel.toFixed(2)}</td>
+    </tr>`;
+  }).join('');
+}
+
 document.getElementById('runBtn').addEventListener('click', ()=>{
   readEloFromInputs();
   const n = parseInt(document.getElementById('trialCount').value, 10);
   const status = document.getElementById('simStatus');
-  status.textContent = 'Running ' + n.toLocaleString() + ' trials…';
+  const btn = document.getElementById('runBtn');
+  btn.disabled = true;
   document.getElementById('resultsWrap').style.display='none';
-  setTimeout(()=>{
-    const t0 = performance.now();
-    lastResults = runSimulation(n);
-    const t1 = performance.now();
-    status.textContent = `Done — ${n.toLocaleString()} trials in ${((t1-t0)/1000).toFixed(2)}s`;
-    document.getElementById('resultsWrap').style.display='block';
-    renderResults();
-  }, 20);
+  document.getElementById('rankings-section').style.display='none';
+  document.getElementById('exit-section').style.display='none';
+  const t0 = performance.now();
+  status.textContent = 'Running ' + n.toLocaleString() + ' trials…';
+  runSimulationChunked(n,
+    (done, total)=>{
+      if(total>=100000){
+        status.textContent = `Running… ${Math.round(done/total*100)}% (${done.toLocaleString()} / ${total.toLocaleString()})`;
+      }
+    },
+    (results)=>{
+      lastResults = results;
+      const t1 = performance.now();
+      status.textContent = `Done — ${n.toLocaleString()} trials in ${((t1-t0)/1000).toFixed(2)}s`;
+      document.getElementById('resultsWrap').style.display='block';
+      document.getElementById('rankings-section').style.display='block';
+      document.getElementById('exit-section').style.display='block';
+      renderResults();
+      renderRankings();
+      renderExits();
+      btn.disabled = false;
+    }
+  );
 });
 
 renderGroups();
