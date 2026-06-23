@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -158,13 +158,13 @@ DOCTYPE html>
       <h1>2026 WORLD <span>CUP</span> SIM</h1>
       <p>Monte Carlo Simulator · Live Edition</p>
     </div>
-    <div class="badge">Group results locked through Argentina–Austria, Jun 22, 2026</div>
+    <div class="badge">Group results locked through Norway–Senegal, Jun 22, 2026</div>
   </div>
 
   <section id="groups-section">
     <div class="section-label">Group Stage — Actual Results</div>
     <h2>Where things stand right now</h2>
-    <p class="sub">The records below are the real group-stage tables from official box scores. The latest locked result is Argentina's 2–0 win over Austria on June 22, where Messi's brace made him the men's World Cup all-time top scorer. The three remaining June 22 night games — France–Iraq, Norway–Senegal, and Jordan–Algeria — hadn't kicked off yet, so they're left for the simulator along with the rest of matchday 3.</p>
+    <p class="sub">The records below are the real group-stage tables from official box scores. The latest locked result is Norway's 3–2 win over Senegal on June 22, an Haaland brace sending Norway through to the knockouts (earlier the same day, France beat Iraq 3–0 and Argentina beat Austria 2–0). The last June 22 game, Jordan–Algeria, hadn't kicked off yet, so it's left for the simulator along with the rest of matchday 3.</p>
     <div class="groups-grid" id="groupsGrid"></div>
     <div class="legend">
       <span class="l1">Through to Round of 32</span>
@@ -266,7 +266,7 @@ const TEAMS = {
   "Netherlands":2000, "Sweden":1870, "Japan":1910, "Tunisia":1790,
   "New Zealand":1720, "Iran":1815, "Belgium":1960, "Egypt":1860,
   "Saudi Arabia":1780, "Uruguay":1950, "Spain":2090, "Cape Verde":1720,
-  "Norway":1880, "France":2090, "Senegal":1900, "Iraq":1730,
+  "Norway":1895, "France":2095, "Senegal":1865, "Iraq":1710,
   "Argentina":2050, "Austria":1855, "Jordan":1690, "Algeria":1800,
   "Colombia":1960, "DR Congo":1740, "Portugal":2030, "Uzbekistan":1690,
   "England":2070, "Ghana":1820, "Panama":1760, "Croatia":1900
@@ -313,8 +313,8 @@ const LOCKED = {
   "Spain":{w:1,d:1,l:0,gf:4,ga:0,pts:4}, "Saudi Arabia":{w:0,d:1,l:1,gf:1,ga:5,pts:1},
   "Uruguay":{w:0,d:2,l:0,gf:3,ga:3,pts:2}, "Cape Verde":{w:0,d:2,l:0,gf:2,ga:2,pts:2},
 
-  "France":{w:1,d:0,l:0,gf:3,ga:1,pts:3}, "Norway":{w:1,d:0,l:0,gf:4,ga:1,pts:3},
-  "Senegal":{w:0,d:0,l:1,gf:1,ga:3,pts:0}, "Iraq":{w:0,d:0,l:1,gf:1,ga:4,pts:0},
+  "France":{w:2,d:0,l:0,gf:6,ga:1,pts:6}, "Norway":{w:2,d:0,l:0,gf:7,ga:3,pts:6},
+  "Senegal":{w:0,d:0,l:2,gf:3,ga:6,pts:0}, "Iraq":{w:0,d:0,l:2,gf:1,ga:7,pts:0},
 
   "Argentina":{w:2,d:0,l:0,gf:5,ga:0,pts:6}, "Austria":{w:1,d:0,l:1,gf:3,ga:3,pts:3},
   "Jordan":{w:0,d:0,l:1,gf:1,ga:3,pts:0}, "Algeria":{w:0,d:0,l:1,gf:0,ga:3,pts:0},
@@ -335,7 +335,7 @@ const REMAINING = {
   F:[["Japan","Sweden"],["Tunisia","Netherlands"]],
   G:[["Egypt","Iran"],["New Zealand","Belgium"]],
   H:[["Cape Verde","Saudi Arabia"],["Uruguay","Spain"]],
-  I:[["France","Iraq"],["Norway","Senegal"],["Norway","France"],["Senegal","Iraq"]],
+  I:[["Norway","France"],["Senegal","Iraq"]],
   J:[["Jordan","Algeria"],["Algeria","Austria"],["Jordan","Argentina"]],
   K:[["Portugal","Uzbekistan"],["Colombia","DR Congo"],["Colombia","Portugal"],["DR Congo","Uzbekistan"]],
   L:[["England","Ghana"],["Panama","Croatia"],["Panama","England"],["Croatia","Ghana"]]
