@@ -72,19 +72,17 @@
   table.gtable th:first-child, table.gtable td:first-child { text-align:left; }
   table.gtable td { padding:5px 4px; text-align:right; border-bottom:1px solid rgba(255,255,255,0.04); font-family:'DM Mono',monospace; }
   table.gtable td.team { font-family:'DM Sans',sans-serif; font-weight:600; text-align:left; }
-  tr.q1 td.team::before { content:'●'; color:var(--win); margin-right:6px; font-size:9px; }
-  tr.q2 td.team::before { content:'●'; color:var(--accent); margin-right:6px; font-size:9px; }
-  tr.qmaybe td.team::before { content:'●'; color:var(--draw); margin-right:6px; font-size:9px; }
-  tr.qno td.team::before { content:'●'; color:var(--loss); margin-right:6px; font-size:9px; }
-  tr.qno td { color:var(--muted); }
+  tr.qual td.team::before { content:'●'; color:var(--win); margin-right:6px; font-size:9px; }
+  tr.alive td.team::before { content:'●'; color:var(--accent); margin-right:6px; font-size:9px; }
+  tr.out td.team::before { content:'●'; color:var(--loss); margin-right:6px; font-size:9px; }
+  tr.out td { color:var(--muted); }
   .remaining { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); line-height:1.7; }
   .remaining b { color:var(--text); font-weight:400; }
   .legend { display:flex; gap:18px; flex-wrap:wrap; margin-top:18px; font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); }
   .legend span::before { margin-right:6px; }
   .legend .l1::before { content:'●'; color:var(--win); }
   .legend .l2::before { content:'●'; color:var(--accent); }
-  .legend .l3::before { content:'●'; color:var(--draw); }
-  .legend .l4::before { content:'●'; color:var(--loss); }
+  .legend .l3::before { content:'●'; color:var(--loss); }
 
   /* third place tracker */
   .thirds-table { width:100%; border-collapse:collapse; font-size:13px; max-width:640px; }
@@ -148,6 +146,19 @@
   .bracket-champion { margin-top:16px; padding:16px 20px; border:1px solid var(--gold); border-radius:10px; background:rgba(255,215,0,0.06); font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:1px; color:var(--gold); }
   .bracket-champion span { color:var(--text); }
   .bracket-note { padding:16px 20px; border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--muted); font-size:14px; line-height:1.6; }
+  /* tab navigation */
+  .tabs { display:flex; gap:4px; margin-top:28px; border-bottom:1px solid var(--border); }
+  .tab {
+    font-family:'DM Mono',monospace; font-size:12px; letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--muted); background:transparent; border:none; border-bottom:2px solid transparent;
+    padding:12px 18px; cursor:pointer; margin-bottom:-1px; transition:color .15s, border-color .15s;
+  }
+  .tab:hover { color:var(--text); }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+  /* first section in a panel shouldn't double up the top border */
+  .tab-panel > section:first-child { border-top:none; }
 </style>
 </head>
 <body>
@@ -158,37 +169,33 @@
       <h1>2026 WORLD <span>CUP</span> SIM</h1>
       <p>Monte Carlo Simulator · Live Edition</p>
     </div>
-    <div class="badge">Group results locked through Norway–Senegal, Jun 22, 2026</div>
+    <div class="badge">Groups A, B &amp; C final · D–L Jun 25–27 — Last updated on Jun 24, 2026</div>
   </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="sim">Simulator</button>
+    <button class="tab" data-tab="elo">Elo Ratings</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-sim">
 
   <section id="groups-section">
     <div class="section-label">Group Stage — Actual Results</div>
     <h2>Where things stand right now</h2>
-    <p class="sub">The records below are the real group-stage tables from official box scores. The latest locked result is Norway's 3–2 win over Senegal on June 22, an Haaland brace sending Norway through to the knockouts (earlier the same day, France beat Iraq 3–0 and Argentina beat Austria 2–0). The last June 22 game, Jordan–Algeria, hadn't kicked off yet, so it's left for the simulator along with the rest of matchday 3.</p>
+    <p class="sub">The records below are the real group-stage tables from official box scores. Matchday 3 is staggered across June 24–27, so it is only partly played. Groups A, B and C have finished. In Group A, Mexico beat Czechia 3–0 to win with a perfect nine points, while South Africa pulled off an upset — a 1–0 win over South Korea that sends South Africa through in second and leaves South Korea in the third-place race. Switzerland beat Canada 2–1 to win Group B (Canada edging Bosnia for second on goal difference after Bosnia beat Qatar 3–1), and in Group C both leaders won — Brazil 3–0 over Scotland and Morocco 4–2 over Haiti — with Brazil taking top spot on goal difference. The other nine groups still have their final round to play: Groups D–F on June 25, G–I on June 26, and J–L on June 27. All of that unplayed, the simulator plays out.</p>
     <div class="groups-grid" id="groupsGrid"></div>
     <div class="legend">
-      <span class="l1">Through to Round of 32</span>
-      <span class="l2">Currently 2nd, in contention</span>
-      <span class="l3">Currently 3rd, alive on points</span>
-      <span class="l4">Mathematically struggling / eliminated</span>
+      <span class="l1">Qualified (≥99% of simulations)</span>
+      <span class="l2">Still in the running</span>
+      <span class="l3">Eliminated (≤1% of simulations)</span>
     </div>
   </section>
 
   <section id="thirds-section">
     <div class="section-label">The Third-Place Race</div>
     <h2>Best 8 of 12 advance</h2>
-    <p class="sub">Eight of the twelve third-place finishers join the Round of 32. Ranked here by points, then goal difference, then goals scored, using locked results only — this will shuffle a lot once remaining fixtures are simulated.</p>
+    <p class="sub">Eight of the twelve third-place finishers join the Round of 32. Ranked here by points, then goal difference, then goals scored, using the real results so far — there is no head-to-head step here by design, since third-placed teams come from different groups and never met. This will shuffle a lot once the remaining fixtures are simulated.</p>
     <table class="thirds-table" id="thirdsTable"></table>
-  </section>
-
-  <section id="elo-section">
-    <div class="section-label">Team Strength Ratings</div>
-    <h2>Editable Elo ratings</h2>
-    <p class="sub">Starting points reflect a blend of pre-tournament strength and form shown so far (e.g. Germany and the USA are bumped up for dominant group-stage wins; Tunisia and Curaçao are dinged for heavy losses). Adjust any number to test your own view of a team, then re-run the simulation.</p>
-    <div class="elo-controls">
-      <button class="btn secondary" id="resetEloBtn">Reset to estimated ratings</button>
-    </div>
-    <div class="elo-grid" id="eloGrid"></div>
   </section>
 
   <section id="sim-section">
@@ -248,9 +255,23 @@
     <div id="bracketWrapBE"></div>
   </section>
 
+  </div><!-- end #tab-sim -->
+
+  <div class="tab-panel" id="tab-elo">
+  <section id="elo-section">
+    <div class="section-label">Team Strength Ratings</div>
+    <h2>Editable Elo ratings</h2>
+    <p class="sub">Starting points reflect a blend of pre-tournament strength and form shown so far (e.g. Germany and the USA are bumped up for dominant group-stage wins; Tunisia and Curaçao are dinged for heavy losses). Adjust any number to test your own view of a team, then switch back to the Simulator tab and re-run.</p>
+    <div class="elo-controls">
+      <button class="btn secondary" id="resetEloBtn">Reset to estimated ratings</button>
+    </div>
+    <div class="elo-grid" id="eloGrid"></div>
+  </section>
+  </div><!-- end #tab-elo -->
+
   <footer>
     <p>
-      Group-stage box scores sourced from live standings and FIFA.com match reports, current through Argentina–Austria on June 22, 2026. Elo ratings are estimates for simulation purposes, not an official ranking. The Round of 32 ("16th finals") seeding uses FIFA's real fixed bracket and the official Annex C assignment table — all 495 published third-place combinations — so bracket paths are accurate, though the projected single bracket is only one illustrative outcome. This is a personal project, not affiliated with FIFA.
+      Group-stage box scores sourced from live standings and FIFA.com match reports, current through the Group A, B and C finales on June 24, 2026 (Groups D–L play their final round June 25–27 and are simulated). Elo ratings are estimates for simulation purposes, not an official ranking. The Round of 32 ("16th finals") seeding uses FIFA's real fixed bracket and the official Annex C assignment table — all 495 published third-place combinations — so bracket paths are accurate, though the projected single bracket is only one illustrative outcome. This is a personal project, not affiliated with FIFA.
     </p>
   </footer>
 
@@ -267,9 +288,9 @@ const TEAMS = {
   "New Zealand":1720, "Iran":1815, "Belgium":1960, "Egypt":1860,
   "Saudi Arabia":1780, "Uruguay":1950, "Spain":2090, "Cape Verde":1720,
   "Norway":1895, "France":2095, "Senegal":1865, "Iraq":1710,
-  "Argentina":2050, "Austria":1855, "Jordan":1690, "Algeria":1800,
-  "Colombia":1960, "DR Congo":1740, "Portugal":2030, "Uzbekistan":1690,
-  "England":2070, "Ghana":1820, "Panama":1760, "Croatia":1900
+  "Argentina":2050, "Austria":1855, "Jordan":1680, "Algeria":1810,
+  "Colombia":1965, "DR Congo":1750, "Portugal":2040, "Uzbekistan":1665,
+  "England":2065, "Ghana":1835, "Panama":1745, "Croatia":1900
 };
 
 const GROUPS = {
@@ -287,93 +308,227 @@ const GROUPS = {
   L:["England","Ghana","Panama","Croatia"]
 };
 
-// w, d, l, gf, ga, pts — computed directly from real box scores through Jun 19-21
-const LOCKED = {
-  "Mexico":{w:2,d:0,l:0,gf:3,ga:0,pts:6}, "South Korea":{w:1,d:0,l:1,gf:2,ga:2,pts:3},
-  "Czechia":{w:0,d:1,l:1,gf:2,ga:3,pts:1}, "South Africa":{w:0,d:1,l:1,gf:1,ga:3,pts:1},
+// PLAYED — the actual matchday-1 and matchday-2 scorelines, by group, as {h(ome), a(way), hg, ag}.
+// Each team's W/D/L/GF/GA/Pts record is DERIVED from these (see tallyMatches) rather than stored
+// separately, so aggregates can never drift out of sync with the scorelines. Storing real scorelines
+// (not just aggregates) is what makes the 2026 head-to-head tiebreakers computable — head-to-head math
+// needs the actual result of each match between tied teams, which can't be reconstructed from aggregates.
+//
+// Every scoreline below reconciles against multiple independent published box scores (ESPN, FIFA.com,
+// FOX, Yahoo, NBC, Al Jazeera) for 22 Jun 2026. NOTE/CORRECTION: an earlier build of this file encoded
+// Egypt–New Zealand as 2–1; the verified result is Egypt 3–1 New Zealand (Surman 15'; Zico 58', Salah
+// 67', Trezeguet 82'), confirmed by ESPN, FIFA.com and Al Jazeera. That is reflected here (Egypt GF 4,
+// New Zealand GA 5), which is why Group G's overall goal totals differ slightly from the old version.
+//
+// MATCHDAY 3 (added 24 Jun 2026): Groups A, B and C have completed their final round so far.
+// A: Mexico 3–0 Czechia (Mexico City) and South Africa 1–0 South Korea (Monterrey) — a result that
+//    puts South Africa through in 2nd and drops South Korea into the third-place race.
+// B: Switzerland 2–1 Canada (Vancouver) and Bosnia and Herzegovina 3–1 Qatar (Seattle).
+// C: Brazil 3–0 Scotland (Miami) and Morocco 4–2 Haiti (Atlanta).
+// Sources cross-checked: NBC live blog (with play-by-play), Yahoo live blog, UEFA, CBS Sports, Fox.
+// Note: one Yahoo summary line listed Switzerland–Canada as 3–1, but NBC's minute-by-minute account
+// and UEFA/CBS/Fox all give 2–1 (Promise David pulled one back late; Canada could not equalise), so
+// 2–1 is used. Groups D–L play their finals 25–27 Jun and remain simulated, not assumed.
+const PLAYED = {
+  A:[{h:"Mexico",a:"South Africa",hg:2,ag:0},{h:"South Korea",a:"Czechia",hg:2,ag:1},{h:"Czechia",a:"South Africa",hg:1,ag:1},{h:"Mexico",a:"South Korea",hg:1,ag:0},{h:"Czechia",a:"Mexico",hg:0,ag:3},{h:"South Africa",a:"South Korea",hg:1,ag:0}],
+  B:[{h:"Canada",a:"Bosnia and Herzegovina",hg:1,ag:1},{h:"Switzerland",a:"Qatar",hg:1,ag:1},{h:"Switzerland",a:"Bosnia and Herzegovina",hg:4,ag:1},{h:"Canada",a:"Qatar",hg:6,ag:0},{h:"Switzerland",a:"Canada",hg:2,ag:1},{h:"Bosnia and Herzegovina",a:"Qatar",hg:3,ag:1}],
+  C:[{h:"Brazil",a:"Morocco",hg:1,ag:1},{h:"Scotland",a:"Haiti",hg:1,ag:0},{h:"Morocco",a:"Scotland",hg:1,ag:0},{h:"Brazil",a:"Haiti",hg:3,ag:0},{h:"Scotland",a:"Brazil",hg:0,ag:3},{h:"Morocco",a:"Haiti",hg:4,ag:2}],
+  D:[{h:"USA",a:"Paraguay",hg:4,ag:1},{h:"Australia",a:"Türkiye",hg:2,ag:0},{h:"USA",a:"Australia",hg:2,ag:0},{h:"Paraguay",a:"Türkiye",hg:1,ag:0}],
+  E:[{h:"Germany",a:"Curaçao",hg:7,ag:1},{h:"Ivory Coast",a:"Ecuador",hg:1,ag:0},{h:"Germany",a:"Ivory Coast",hg:2,ag:1},{h:"Ecuador",a:"Curaçao",hg:0,ag:0}],
+  F:[{h:"Netherlands",a:"Japan",hg:2,ag:2},{h:"Sweden",a:"Tunisia",hg:5,ag:1},{h:"Netherlands",a:"Sweden",hg:5,ag:1},{h:"Japan",a:"Tunisia",hg:4,ag:0}],
+  G:[{h:"Belgium",a:"Egypt",hg:1,ag:1},{h:"Iran",a:"New Zealand",hg:2,ag:2},{h:"Belgium",a:"Iran",hg:0,ag:0},{h:"Egypt",a:"New Zealand",hg:3,ag:1}],
+  H:[{h:"Spain",a:"Cape Verde",hg:0,ag:0},{h:"Saudi Arabia",a:"Uruguay",hg:1,ag:1},{h:"Spain",a:"Saudi Arabia",hg:4,ag:0},{h:"Uruguay",a:"Cape Verde",hg:2,ag:2}],
+  I:[{h:"France",a:"Senegal",hg:3,ag:1},{h:"Norway",a:"Iraq",hg:4,ag:1},{h:"France",a:"Iraq",hg:3,ag:0},{h:"Norway",a:"Senegal",hg:3,ag:2}],
+  J:[{h:"Argentina",a:"Algeria",hg:3,ag:0},{h:"Austria",a:"Jordan",hg:3,ag:1},{h:"Argentina",a:"Austria",hg:2,ag:0},{h:"Jordan",a:"Algeria",hg:1,ag:2}],
+  K:[{h:"Portugal",a:"DR Congo",hg:1,ag:1},{h:"Colombia",a:"Uzbekistan",hg:3,ag:1},{h:"Portugal",a:"Uzbekistan",hg:5,ag:0},{h:"Colombia",a:"DR Congo",hg:1,ag:0}],
+  L:[{h:"England",a:"Croatia",hg:4,ag:2},{h:"Ghana",a:"Panama",hg:1,ag:0},{h:"England",a:"Ghana",hg:0,ag:0},{h:"Croatia",a:"Panama",hg:1,ag:0}]
+};
 
-  "Canada":{w:1,d:1,l:0,gf:7,ga:1,pts:4}, "Switzerland":{w:1,d:1,l:0,gf:5,ga:2,pts:4},
-  "Bosnia and Herzegovina":{w:0,d:1,l:1,gf:2,ga:5,pts:1}, "Qatar":{w:0,d:1,l:1,gf:1,ga:7,pts:1},
-
-  "Brazil":{w:1,d:1,l:0,gf:4,ga:1,pts:4}, "Morocco":{w:1,d:1,l:0,gf:2,ga:1,pts:4},
-  "Scotland":{w:1,d:0,l:1,gf:1,ga:1,pts:3}, "Haiti":{w:0,d:0,l:2,gf:0,ga:4,pts:0},
-
-  "USA":{w:2,d:0,l:0,gf:6,ga:1,pts:6}, "Australia":{w:1,d:0,l:1,gf:2,ga:2,pts:3},
-  "Paraguay":{w:1,d:0,l:1,gf:2,ga:4,pts:3}, "Türkiye":{w:0,d:0,l:2,gf:0,ga:3,pts:0},
-
-  "Germany":{w:2,d:0,l:0,gf:9,ga:2,pts:6}, "Ivory Coast":{w:1,d:0,l:1,gf:2,ga:2,pts:3},
-  "Ecuador":{w:0,d:1,l:1,gf:0,ga:1,pts:1}, "Curaçao":{w:0,d:1,l:1,gf:1,ga:7,pts:1},
-
-  "Netherlands":{w:1,d:1,l:0,gf:7,ga:3,pts:4}, "Japan":{w:1,d:1,l:0,gf:6,ga:2,pts:4},
-  "Sweden":{w:1,d:0,l:1,gf:6,ga:6,pts:3}, "Tunisia":{w:0,d:0,l:2,gf:1,ga:9,pts:0},
-
-  "Iran":{w:0,d:2,l:0,gf:2,ga:2,pts:2}, "Belgium":{w:0,d:2,l:0,gf:1,ga:1,pts:2},
-  "Egypt":{w:1,d:1,l:0,gf:3,ga:2,pts:4}, "New Zealand":{w:0,d:1,l:1,gf:3,ga:4,pts:1},
-
-  "Spain":{w:1,d:1,l:0,gf:4,ga:0,pts:4}, "Saudi Arabia":{w:0,d:1,l:1,gf:1,ga:5,pts:1},
-  "Uruguay":{w:0,d:2,l:0,gf:3,ga:3,pts:2}, "Cape Verde":{w:0,d:2,l:0,gf:2,ga:2,pts:2},
-
-  "France":{w:2,d:0,l:0,gf:6,ga:1,pts:6}, "Norway":{w:2,d:0,l:0,gf:7,ga:3,pts:6},
-  "Senegal":{w:0,d:0,l:2,gf:3,ga:6,pts:0}, "Iraq":{w:0,d:0,l:2,gf:1,ga:7,pts:0},
-
-  "Argentina":{w:2,d:0,l:0,gf:5,ga:0,pts:6}, "Austria":{w:1,d:0,l:1,gf:3,ga:3,pts:3},
-  "Jordan":{w:0,d:0,l:1,gf:1,ga:3,pts:0}, "Algeria":{w:0,d:0,l:1,gf:0,ga:3,pts:0},
-
-  "Colombia":{w:1,d:0,l:0,gf:3,ga:1,pts:3}, "DR Congo":{w:0,d:1,l:0,gf:1,ga:1,pts:1},
-  "Portugal":{w:0,d:1,l:0,gf:1,ga:1,pts:1}, "Uzbekistan":{w:0,d:0,l:1,gf:1,ga:3,pts:0},
-
-  "England":{w:1,d:0,l:0,gf:4,ga:2,pts:3}, "Ghana":{w:1,d:0,l:0,gf:1,ga:0,pts:3},
-  "Panama":{w:0,d:0,l:1,gf:0,ga:1,pts:0}, "Croatia":{w:0,d:0,l:1,gf:2,ga:4,pts:0}
+// FIFA/Coca-Cola Men's World Ranking POSITION as of the most recent official update, 11 June 2026
+// (the edition FIFA's rules reference as the criterion-7 fallback during the tournament). Source:
+// FIFA.com ranking, cross-checked against ESPN's published top-of-table (Argentina 1, Spain 2, France
+// 3, England 4, Portugal 5, Brazil 6, USA 17, Mexico 14, Canada 30). Lower number = higher ranked.
+// Used ONLY as group tiebreak criterion 7 (see breakByOverall). It is NOT the Elo used to simulate
+// matches — that's the separate, editable TEAMS map above.
+const FIFA_RANK = {
+  "Argentina":1,"Spain":2,"France":3,"England":4,"Portugal":5,"Brazil":6,"Morocco":7,"Netherlands":8,
+  "Belgium":9,"Germany":10,"Croatia":11,"Colombia":13,"Mexico":14,"Senegal":15,"Uruguay":16,"USA":17,
+  "Japan":18,"Switzerland":19,"Iran":20,"Türkiye":22,"Ecuador":23,"Austria":24,"South Korea":25,
+  "Australia":27,"Algeria":28,"Egypt":29,"Canada":30,"Norway":31,"Ivory Coast":33,"Panama":34,
+  "Sweden":38,"Czechia":40,"Paraguay":41,"Scotland":42,"Tunisia":45,"DR Congo":46,"Uzbekistan":50,
+  "Qatar":56,"Iraq":57,"South Africa":60,"Saudi Arabia":61,"Jordan":63,"Bosnia and Herzegovina":64,
+  "Cape Verde":67,"Ghana":73,"Curaçao":82,"Haiti":83,"New Zealand":85
 };
 
 const REMAINING = {
-  A:[["Czechia","Mexico"],["South Africa","South Korea"]],
-  B:[["Switzerland","Canada"],["Bosnia and Herzegovina","Qatar"]],
-  C:[["Scotland","Brazil"],["Morocco","Haiti"]],
+  A:[],
+  B:[],
+  C:[],
   D:[["Türkiye","USA"],["Paraguay","Australia"]],
   E:[["Ecuador","Germany"],["Curaçao","Ivory Coast"]],
   F:[["Japan","Sweden"],["Tunisia","Netherlands"]],
   G:[["Egypt","Iran"],["New Zealand","Belgium"]],
   H:[["Cape Verde","Saudi Arabia"],["Uruguay","Spain"]],
   I:[["Norway","France"],["Senegal","Iraq"]],
-  J:[["Jordan","Algeria"],["Algeria","Austria"],["Jordan","Argentina"]],
-  K:[["Portugal","Uzbekistan"],["Colombia","DR Congo"],["Colombia","Portugal"],["DR Congo","Uzbekistan"]],
-  L:[["England","Ghana"],["Panama","Croatia"],["Panama","England"],["Croatia","Ghana"]]
+  J:[["Algeria","Austria"],["Jordan","Argentina"]],
+  K:[["Colombia","Portugal"],["DR Congo","Uzbekistan"]],
+  L:[["Panama","England"],["Croatia","Ghana"]]
 };
 
 let eloMap = Object.assign({}, TEAMS);
 
+// ============================================================================
+// 2026 FIFA group-stage ranking engine
+// ----------------------------------------------------------------------------
+// Builds each team's W/D/L/GF/GA/Pts record from a list of match scorelines, and
+// ranks a group using the EXACT 2026 tiebreaker order. The headline 2026 rule
+// change (published by FIFA on 19 Apr 2026) is that HEAD-TO-HEAD now sits ABOVE
+// overall goal difference. When teams are level on points, the order is:
+//   1. head-to-head points (among only the tied teams)
+//   2. head-to-head goal difference
+//   3. head-to-head goals scored
+//   4. overall goal difference (all group games)
+//   5. overall goals scored
+//   6. team conduct / fair-play score  <-- NOT MODELLED (see note)
+//   7. FIFA Men's World Ranking (11 Jun 2026 edition; see FIFA_RANK)
+//   8. drawing of lots (vanishingly rare; never reached here — all 48 ranks distinct)
+//
+// KNOWN GAP — criterion 6 (team conduct / fair-play): this simulator does not
+// track yellow/red cards, so the fair-play score cannot be computed or simulated.
+// Rather than fabricate card data, criterion 6 is SKIPPED: any tie that survives
+// overall GD and overall goals falls straight through to FIFA ranking (criterion
+// 7). In practice criterion 6 almost never decides a real group, and a tie deep
+// enough to reach it here is astronomically rare.
+//
+// Recursive rule (confirmed by FOX Sports / FIFA): if head-to-head PARTIALLY
+// separates a tied set, the head-to-head criteria are re-applied from the top to
+// any sub-set that is still tied, before falling through to the overall criteria.
+
+// Derive W/D/L/GF/GA/Pts for every team appearing in `matches`.
+function tallyMatches(matches){
+  const rec = {};
+  const ensure = t => { if(!rec[t]) rec[t] = {w:0,d:0,l:0,gf:0,ga:0,pts:0}; };
+  for(const m of matches){
+    ensure(m.h); ensure(m.a);
+    rec[m.h].gf+=m.hg; rec[m.h].ga+=m.ag; rec[m.a].gf+=m.ag; rec[m.a].ga+=m.hg;
+    if(m.hg>m.ag){ rec[m.h].w++; rec[m.h].pts+=3; rec[m.a].l++; }
+    else if(m.ag>m.hg){ rec[m.a].w++; rec[m.a].pts+=3; rec[m.h].l++; }
+    else { rec[m.h].d++; rec[m.a].d++; rec[m.h].pts++; rec[m.a].pts++; }
+  }
+  return rec;
+}
+
+// Split an array that is ALREADY sorted by a key into runs of equal key.
+function splitEqual(sortedArr, keyFn){
+  const blocks=[]; let cur=[];
+  sortedArr.forEach((x,i)=>{
+    if(i>0 && keyFn(x)===keyFn(sortedArr[i-1])) cur.push(x);
+    else { if(cur.length) blocks.push(cur); cur=[x]; }
+  });
+  if(cur.length) blocks.push(cur);
+  return blocks;
+}
+
+// Criteria 4 -> 5 -> (6 skipped) -> 7. Applied to a block that head-to-head could
+// not separate. `overall` is the full-group record table.
+function breakByOverall(group, overall, fifaRank){
+  return group.slice().sort((a,b)=>
+    ((overall[b].gf-overall[b].ga)-(overall[a].gf-overall[a].ga)) ||  // 4: overall GD
+    (overall[b].gf-overall[a].gf) ||                                  // 5: overall goals
+    // 6 (team conduct) intentionally omitted — no card data tracked.
+    ((fifaRank[a]??999)-(fifaRank[b]??999))                           // 7: FIFA ranking (lower=better)
+  );
+}
+
+// Criteria 1 -> 2 -> 3 (head-to-head), applied recursively to a set of teams that
+// are all level on overall points. `allMatches` is every group game (real + simulated).
+function applyH2H(group, overall, allMatches, fifaRank){
+  if(group.length===1) return group.slice();
+  const set = new Set(group);
+  // mini-table built ONLY from matches between the currently-tied teams
+  const h2h = tallyMatches(allMatches.filter(m => set.has(m.h) && set.has(m.a)));
+  group.forEach(t=>{ if(!h2h[t]) h2h[t] = {w:0,d:0,l:0,gf:0,ga:0,pts:0}; });
+  const sorted = group.slice().sort((a,b)=>
+    (h2h[b].pts - h2h[a].pts) ||
+    ((h2h[b].gf-h2h[b].ga) - (h2h[a].gf-h2h[a].ga)) ||
+    (h2h[b].gf - h2h[a].gf)
+  );
+  const blocks = splitEqual(sorted, t => h2h[t].pts+'|'+(h2h[t].gf-h2h[t].ga)+'|'+h2h[t].gf);
+  // head-to-head produced no separation at all -> fall through to overall criteria
+  if(blocks.length===1) return breakByOverall(group, overall, fifaRank);
+  // head-to-head separated the set -> re-apply head-to-head to any still-tied sub-block
+  const out=[];
+  for(const b of blocks){
+    if(b.length===1) out.push(b[0]);
+    else out.push(...applyH2H(b, overall, allMatches, fifaRank));
+  }
+  return out;
+}
+
+// Rank a group (any number of teams) from a list of scorelines, per 2026 rules.
+// Returns {order:[1st..last], overall: recordTable}.
+function rankGroup(teams, matches, fifaRank){
+  const overall = tallyMatches(matches);
+  teams.forEach(t=>{ if(!overall[t]) overall[t] = {w:0,d:0,l:0,gf:0,ga:0,pts:0}; });
+  const byPts = teams.slice().sort((a,b)=> overall[b].pts - overall[a].pts);
+  const blocks = splitEqual(byPts, t => overall[t].pts);   // criterion a: points
+  const order = [];
+  for(const b of blocks){
+    if(b.length===1) order.push(b[0]);
+    else order.push(...applyH2H(b, overall, matches, fifaRank));
+  }
+  return {order, overall};
+}
+
 // ---------- rendering: group cards ----------
-function classify(rank){
-  if(rank===0) return 'q1';
-  if(rank===1) return 'q2';
-  if(rank===2) return 'qmaybe';
-  return 'qno';
+// Precomputed dot status from a 100,000-trial run at build time (real results through Jun 23),
+// so the group tables show correct colours on first load before any live run.
+const INITIAL_QUAL = {"Mexico":"qual","South Korea":"alive","Czechia":"out","South Africa":"qual","Canada":"qual","Switzerland":"qual","Bosnia and Herzegovina":"qual","Qatar":"out","Brazil":"qual","Morocco":"qual","Scotland":"alive","Haiti":"out","USA":"qual","Australia":"alive","Paraguay":"alive","Türkiye":"out","Germany":"qual","Ivory Coast":"alive","Ecuador":"alive","Curaçao":"alive","Netherlands":"qual","Sweden":"alive","Japan":"qual","Tunisia":"out","New Zealand":"alive","Iran":"alive","Belgium":"alive","Egypt":"qual","Saudi Arabia":"alive","Uruguay":"alive","Spain":"qual","Cape Verde":"alive","Norway":"qual","France":"qual","Senegal":"alive","Iraq":"alive","Argentina":"qual","Austria":"alive","Jordan":"out","Algeria":"alive","Colombia":"qual","DR Congo":"alive","Portugal":"qual","Uzbekistan":"alive","England":"qual","Ghana":"qual","Panama":"out","Croatia":"alive"};
+
+// Dot status from the latest simulation, using 99% thresholds: a team that reaches the
+// knockouts in at least 99% of trials is treated as qualified for sure, one that reaches
+// them in 1% of trials or fewer is treated as eliminated, and anything in between is still
+// in the running. This correctly accounts for the best-8-third-placed-teams rule, which a
+// simple league-position rule cannot. (The 99%/1% cutoffs mean a team can flip to green or
+// red slightly before it is strictly mathematically certain, but the remaining path is
+// vanishingly thin.)
+function qualClass(team){
+  if(lastResults && lastResults[team]){
+    const r = lastResults[team].r32;
+    if(r >= 99) return 'qual';   // green: through in >=99% of trials
+    if(r <= 1)  return 'out';    // red: through in <=1% of trials
+    return 'alive';               // blue: in between — still in the running
+  }
+  // before any live run, use the build-time 100k result so the dots are correct on open
+  return (typeof INITIAL_QUAL !== 'undefined' && INITIAL_QUAL[team]) || 'alive';
 }
 
 function renderGroups(){
   const grid = document.getElementById('groupsGrid');
   grid.innerHTML = '';
   Object.keys(GROUPS).forEach(g=>{
-    const teams = GROUPS[g].slice().sort((a,b)=>{
-      const A=LOCKED[a], B=LOCKED[b];
-      return (B.pts-A.pts) || ((B.gf-B.ga)-(A.gf-A.ga)) || (B.gf-A.gf);
-    });
+    // current standings from REAL games only, ordered by the 2026 tiebreakers
+    const {order, overall} = rankGroup(GROUPS[g], PLAYED[g], FIFA_RANK);
     const card = document.createElement('div');
     card.className='group-card';
-    let rows = teams.map((t,i)=>{
-      const r = LOCKED[t];
+    let rows = order.map((t,i)=>{
+      const r = overall[t];
       const gd = r.gf-r.ga;
-      return `<tr class="${classify(i)}"><td class="team">${t}</td><td>${r.w+r.d+r.l}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf}</td><td>${r.ga}</td><td>${gd>0?'+':''}${gd}</td><td>${r.pts}</td></tr>`;
+      return `<tr class="${qualClass(t)}"><td class="team">${t}</td><td>${r.w+r.d+r.l}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td><td>${r.gf}</td><td>${r.ga}</td><td>${gd>0?'+':''}${gd}</td><td>${r.pts}</td></tr>`;
     }).join('');
     const rem = REMAINING[g].map(([h,a])=>`<b>${h}</b> vs <b>${a}</b>`).join(' · ');
+    const done = REMAINING[g].length===0;
+    const headSmall = done ? 'group complete' : `${REMAINING[g].length} match${REMAINING[g].length>1?'es':''} left`;
+    const remLine = done
+      ? `Group stage final — <b>${order[0]}</b> and <b>${order[1]}</b> advance; <b>${order[2]}</b> goes to the third-place race.`
+      : `Remaining: ${rem}`;
     card.innerHTML = `
-      <h3>Group ${g} <small>${REMAINING[g].length} match${REMAINING[g].length>1?'es':''} left</small></h3>
+      <h3>Group ${g} <small>${headSmall}</small></h3>
       <table class="gtable">
         <thead><tr><th>Team</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
-      <div class="remaining">Remaining: ${rem}</div>
+      <div class="remaining">${remLine}</div>
     `;
     grid.appendChild(card);
   });
@@ -382,14 +537,14 @@ function renderGroups(){
 // ---------- third place tracker ----------
 function renderThirds(){
   const thirds = Object.keys(GROUPS).map(g=>{
-    const teams = GROUPS[g].slice().sort((a,b)=>{
-      const A=LOCKED[a], B=LOCKED[b];
-      return (B.pts-A.pts) || ((B.gf-B.ga)-(A.gf-A.ga)) || (B.gf-A.gf);
-    });
-    const t = teams[2];
-    const r = LOCKED[t];
+    // who is 3rd within the group uses the 2026 within-group tiebreakers (incl. head-to-head)
+    const {order, overall} = rankGroup(GROUPS[g], PLAYED[g], FIFA_RANK);
+    const t = order[2];
+    const r = overall[t];
     return {team:t, group:g, pts:r.pts, gd:r.gf-r.ga, gf:r.gf};
   });
+  // cross-group ranking of the 12 third-placed teams: pts -> GD -> GF (NO head-to-head;
+  // these teams come from different groups and never played each other).
   thirds.sort((a,b)=> b.pts-a.pts || b.gd-a.gd || b.gf-a.gf);
   const tbl = document.getElementById('thirdsTable');
   let rows = thirds.map((t,i)=>{
@@ -439,7 +594,7 @@ const SLOT_ORDER = ['A','B','D','E','G','I','K','L'];
 // ---------- simulation engine ----------
 function matchProbs(eloA, eloB){
   const d = eloA - eloB;
-  const eA = 1/(1+Math.pow(10, -d/400));
+  const eA = 1/(1+Math.pow(10, -d/300));
   const pDraw = 0.24 + 0.06*Math.exp(-Math.pow(d/200,2));
   const pA = (1-pDraw)*eA;
   const pB = (1-pDraw)*(1-eA);
@@ -480,25 +635,16 @@ function advanceProb(eloA, eloB){
 }
 
 function simulateGroupFinal(g){
-  const teams = GROUPS[g];
-  const rec = {};
-  teams.forEach(t=>{
-    const l = LOCKED[t];
-    rec[t] = {w:l.w,d:l.d,l:l.l,gf:l.gf,ga:l.ga,pts:l.pts};
-  });
+  // start from the real played matches, then simulate the remaining (matchday 3) fixtures,
+  // RECORDING each simulated scoreline so head-to-head can be computed on the full 3-game group.
+  const matches = PLAYED[g].slice();
   REMAINING[g].forEach(([home,away])=>{
-    const {result,gA,gB} = simGroupMatch(eloMap[home], eloMap[away]);
-    rec[home].gf += gA; rec[home].ga += gB;
-    rec[away].gf += gB; rec[away].ga += gA;
-    if(result==='A'){ rec[home].w++; rec[home].pts+=3; rec[away].l++; }
-    else if(result==='B'){ rec[away].w++; rec[away].pts+=3; rec[home].l++; }
-    else { rec[home].d++; rec[away].d++; rec[home].pts++; rec[away].pts++; }
+    const {gA,gB} = simGroupMatch(eloMap[home], eloMap[away]);
+    matches.push({h:home, a:away, hg:gA, ag:gB});
   });
-  const order = teams.slice().sort((a,b)=>{
-    const A=rec[a], B=rec[b];
-    return (B.pts-A.pts) || ((B.gf-B.ga)-(A.gf-A.ga)) || (B.gf-A.gf) || (Math.random()-0.5);
-  });
-  return {order, rec};
+  // rank with the exact 2026 tiebreakers (head-to-head first, recursive; FIFA ranking fallback)
+  const {order, overall} = rankGroup(GROUPS[g], matches, FIFA_RANK);
+  return {order, rec:overall};
 }
 
 // Build the Round of 32 as 16 matches, ordered so that pairing consecutive
@@ -918,6 +1064,7 @@ document.getElementById('runBtn').addEventListener('click', ()=>{
       document.getElementById('bracket-nl-section').style.display='block';
       document.getElementById('bracket-be-section').style.display='block';
       renderResults();
+      renderGroups();
       renderRankings();
       renderBracket();
       renderScenarioBracket('Netherlands', 'bracketWrapNL');
@@ -930,6 +1077,15 @@ document.getElementById('runBtn').addEventListener('click', ()=>{
 renderGroups();
 renderThirds();
 renderEloPanel();
+
+// ---------- tab switching ----------
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    const target = tab.dataset.tab;
+    document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t===tab));
+    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active', p.id==='tab-'+target));
+  });
+});
 </script>
 </body>
 </html>
