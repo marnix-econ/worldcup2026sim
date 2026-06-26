@@ -169,7 +169,7 @@
       <h1>2026 WORLD <span>CUP</span> SIM</h1>
       <p>Monte Carlo Simulator · Live Edition</p>
     </div>
-    <div class="badge">Groups A, B &amp; C final · D–L Jun 25–27 — Last updated on Jun 24, 2026</div>
+    <div class="badge">Groups A–F final · G–L play Jun 26–27 — Last updated on Jun 26, 2026</div>
   </div>
 
   <div class="tabs">
@@ -182,7 +182,7 @@
   <section id="groups-section">
     <div class="section-label">Group Stage — Actual Results</div>
     <h2>Where things stand right now</h2>
-    <p class="sub">The records below are the real group-stage tables from official box scores. Matchday 3 is staggered across June 24–27, so it is only partly played. Groups A, B and C have finished. In Group A, Mexico beat Czechia 3–0 to win with a perfect nine points, while South Africa pulled off an upset — a 1–0 win over South Korea that sends South Africa through in second and leaves South Korea in the third-place race. Switzerland beat Canada 2–1 to win Group B (Canada edging Bosnia for second on goal difference after Bosnia beat Qatar 3–1), and in Group C both leaders won — Brazil 3–0 over Scotland and Morocco 4–2 over Haiti — with Brazil taking top spot on goal difference. The other nine groups still have their final round to play: Groups D–F on June 25, G–I on June 26, and J–L on June 27. All of that unplayed, the simulator plays out.</p>
+    <p class="sub">The records below are the real group-stage tables from official box scores. Half the field has now finished: Groups A–F are complete. The June 25 round delivered some shocks — Türkiye beat the USA 3–2 (the USA still topping Group D, with Australia edging Paraguay for second on goal difference after a 0–0 draw), Ecuador stunned Germany 2–1 (though Germany had already clinched the group and pip Ivory Coast on their head-to-head win), and Ivory Coast beat Curaçao 2–0 to take second in E. In Group F the Netherlands saw off Tunisia 3–1 to win the group while Japan and Sweden drew 1–1, leaving Japan second and Sweden third. The other six groups play their final round next: Groups G–I on June 26 and J–L on June 27. All of that unplayed, the simulator plays out.</p>
     <div class="groups-grid" id="groupsGrid"></div>
     <div class="legend">
       <span class="l1">Qualified (≥99% of simulations)</span>
@@ -261,7 +261,7 @@
   <section id="elo-section">
     <div class="section-label">Team Strength Ratings</div>
     <h2>Editable Elo ratings</h2>
-    <p class="sub">Starting points reflect a blend of pre-tournament strength and form shown so far (e.g. Germany and the USA are bumped up for dominant group-stage wins; Tunisia and Curaçao are dinged for heavy losses). Adjust any number to test your own view of a team, then switch back to the Simulator tab and re-run.</p>
+    <p class="sub">These ratings start from pre-tournament strength and are then updated match-by-match for every result through June 25 using a standard Elo step (goal-difference-weighted, calibrated to this model's own win-probability curve). Recent movers: Ecuador, Türkiye and South Africa rose for upset wins, while Germany, the USA and South Korea fell after losing as favourites — though a few of those losses came in dead rubbers with rotated squads, which the Elo step can't distinguish, so treat them with some skepticism. Adjust any number to test your own view of a team, then switch back to the Simulator tab and re-run.</p>
     <div class="elo-controls">
       <button class="btn secondary" id="resetEloBtn">Reset to estimated ratings</button>
     </div>
@@ -271,7 +271,7 @@
 
   <footer>
     <p>
-      Group-stage box scores sourced from live standings and FIFA.com match reports, current through the Group A, B and C finales on June 24, 2026 (Groups D–L play their final round June 25–27 and are simulated). Elo ratings are estimates for simulation purposes, not an official ranking. The Round of 32 ("16th finals") seeding uses FIFA's real fixed bracket and the official Annex C assignment table — all 495 published third-place combinations — so bracket paths are accurate, though the projected single bracket is only one illustrative outcome. This is a personal project, not affiliated with FIFA.
+      Group-stage box scores sourced from live standings and FIFA.com match reports, current through the Group D, E and F finales on June 25, 2026 (Groups G–L play their final round June 26–27 and are simulated). Elo ratings are estimates for simulation purposes, not an official ranking. The Round of 32 ("16th finals") seeding uses FIFA's real fixed bracket and the official Annex C assignment table — all 495 published third-place combinations — so bracket paths are accurate, though the projected single bracket is only one illustrative outcome. This is a personal project, not affiliated with FIFA.
     </p>
   </footer>
 
@@ -279,18 +279,18 @@
 
 <script>
 const TEAMS = {
-  "Mexico":1900, "South Korea":1840, "Czechia":1780, "South Africa":1750,
-  "Canada":1870, "Switzerland":1920, "Bosnia and Herzegovina":1800, "Qatar":1740,
-  "Brazil":2060, "Morocco":1930, "Scotland":1860, "Haiti":1700,
-  "USA":1890, "Australia":1830, "Paraguay":1800, "Türkiye":1730,
-  "Germany":2040, "Ivory Coast":1870, "Ecuador":1860, "Curaçao":1640,
-  "Netherlands":2000, "Sweden":1870, "Japan":1910, "Tunisia":1790,
-  "New Zealand":1720, "Iran":1815, "Belgium":1960, "Egypt":1860,
-  "Saudi Arabia":1780, "Uruguay":1950, "Spain":2090, "Cape Verde":1720,
-  "Norway":1895, "France":2095, "Senegal":1865, "Iraq":1710,
-  "Argentina":2050, "Austria":1855, "Jordan":1680, "Algeria":1810,
-  "Colombia":1965, "DR Congo":1750, "Portugal":2040, "Uzbekistan":1665,
-  "England":2065, "Ghana":1835, "Panama":1745, "Croatia":1900
+  "Mexico":1920, "South Korea":1813, "Czechia":1760, "South Africa":1777,
+  "Canada":1854, "Switzerland":1936, "Bosnia and Herzegovina":1823, "Qatar":1717,
+  "Brazil":2072, "Morocco":1939, "Scotland":1848, "Haiti":1691,
+  "USA":1859, "Australia":1828, "Paraguay":1802, "Türkiye":1761,
+  "Germany":2008, "Ivory Coast":1879, "Ecuador":1892, "Curaçao":1631,
+  "Netherlands":2010, "Sweden":1873, "Japan":1907, "Tunisia":1780,
+  "New Zealand":1705, "Iran":1825, "Belgium":1950, "Egypt":1875,
+  "Saudi Arabia":1774, "Uruguay":1936, "Spain":2096, "Cape Verde":1734,
+  "Norway":1913, "France":2098, "Senegal":1847, "Iraq":1707,
+  "Argentina":2061, "Austria":1844, "Jordan":1669, "Algeria":1821,
+  "Colombia":1971, "DR Congo":1744, "Portugal":2044, "Uzbekistan":1661,
+  "England":2051, "Ghana":1849, "Panama":1736, "Croatia":1909
 };
 
 const GROUPS = {
@@ -320,22 +320,23 @@ const GROUPS = {
 // 67', Trezeguet 82'), confirmed by ESPN, FIFA.com and Al Jazeera. That is reflected here (Egypt GF 4,
 // New Zealand GA 5), which is why Group G's overall goal totals differ slightly from the old version.
 //
-// MATCHDAY 3 (added 24 Jun 2026): Groups A, B and C have completed their final round so far.
-// A: Mexico 3–0 Czechia (Mexico City) and South Africa 1–0 South Korea (Monterrey) — a result that
-//    puts South Africa through in 2nd and drops South Korea into the third-place race.
-// B: Switzerland 2–1 Canada (Vancouver) and Bosnia and Herzegovina 3–1 Qatar (Seattle).
-// C: Brazil 3–0 Scotland (Miami) and Morocco 4–2 Haiti (Atlanta).
-// Sources cross-checked: NBC live blog (with play-by-play), Yahoo live blog, UEFA, CBS Sports, Fox.
-// Note: one Yahoo summary line listed Switzerland–Canada as 3–1, but NBC's minute-by-minute account
-// and UEFA/CBS/Fox all give 2–1 (Promise David pulled one back late; Canada could not equalise), so
-// 2–1 is used. Groups D–L play their finals 25–27 Jun and remain simulated, not assumed.
+// MATCHDAY 3: Groups A–F have completed their final round.
+// A (24 Jun): Mexico 3–0 Czechia and South Africa 1–0 South Korea (South Africa 2nd, South Korea to thirds).
+// B (24 Jun): Switzerland 2–1 Canada and Bosnia and Herzegovina 3–1 Qatar.
+// C (24 Jun): Brazil 3–0 Scotland and Morocco 4–2 Haiti.
+// D (25 Jun): Türkiye 3–2 USA and Paraguay 0–0 Australia (USA win group; Australia 2nd on GD, Paraguay 3rd).
+// E (25 Jun): Ecuador 2–1 Germany and Curaçao 0–2 Ivory Coast (Germany top group on h2h over Ivory Coast).
+// F (25 Jun): Japan 1–1 Sweden and Tunisia 1–3 Netherlands (Netherlands win; Japan 2nd, Sweden 3rd).
+// Sources cross-checked across NBC/Yahoo live blogs, ESPN match recap, CBS Sports, UEFA, Fox.
+// Note: one Yahoo summary line had Switzerland–Canada as 3–1, but NBC play-by-play plus UEFA/CBS/Fox
+// give 2–1, which is used. Groups G–L play 26–27 Jun and remain simulated, not assumed.
 const PLAYED = {
   A:[{h:"Mexico",a:"South Africa",hg:2,ag:0},{h:"South Korea",a:"Czechia",hg:2,ag:1},{h:"Czechia",a:"South Africa",hg:1,ag:1},{h:"Mexico",a:"South Korea",hg:1,ag:0},{h:"Czechia",a:"Mexico",hg:0,ag:3},{h:"South Africa",a:"South Korea",hg:1,ag:0}],
   B:[{h:"Canada",a:"Bosnia and Herzegovina",hg:1,ag:1},{h:"Switzerland",a:"Qatar",hg:1,ag:1},{h:"Switzerland",a:"Bosnia and Herzegovina",hg:4,ag:1},{h:"Canada",a:"Qatar",hg:6,ag:0},{h:"Switzerland",a:"Canada",hg:2,ag:1},{h:"Bosnia and Herzegovina",a:"Qatar",hg:3,ag:1}],
   C:[{h:"Brazil",a:"Morocco",hg:1,ag:1},{h:"Scotland",a:"Haiti",hg:1,ag:0},{h:"Morocco",a:"Scotland",hg:1,ag:0},{h:"Brazil",a:"Haiti",hg:3,ag:0},{h:"Scotland",a:"Brazil",hg:0,ag:3},{h:"Morocco",a:"Haiti",hg:4,ag:2}],
-  D:[{h:"USA",a:"Paraguay",hg:4,ag:1},{h:"Australia",a:"Türkiye",hg:2,ag:0},{h:"USA",a:"Australia",hg:2,ag:0},{h:"Paraguay",a:"Türkiye",hg:1,ag:0}],
-  E:[{h:"Germany",a:"Curaçao",hg:7,ag:1},{h:"Ivory Coast",a:"Ecuador",hg:1,ag:0},{h:"Germany",a:"Ivory Coast",hg:2,ag:1},{h:"Ecuador",a:"Curaçao",hg:0,ag:0}],
-  F:[{h:"Netherlands",a:"Japan",hg:2,ag:2},{h:"Sweden",a:"Tunisia",hg:5,ag:1},{h:"Netherlands",a:"Sweden",hg:5,ag:1},{h:"Japan",a:"Tunisia",hg:4,ag:0}],
+  D:[{h:"USA",a:"Paraguay",hg:4,ag:1},{h:"Australia",a:"Türkiye",hg:2,ag:0},{h:"USA",a:"Australia",hg:2,ag:0},{h:"Paraguay",a:"Türkiye",hg:1,ag:0},{h:"Türkiye",a:"USA",hg:3,ag:2},{h:"Paraguay",a:"Australia",hg:0,ag:0}],
+  E:[{h:"Germany",a:"Curaçao",hg:7,ag:1},{h:"Ivory Coast",a:"Ecuador",hg:1,ag:0},{h:"Germany",a:"Ivory Coast",hg:2,ag:1},{h:"Ecuador",a:"Curaçao",hg:0,ag:0},{h:"Ecuador",a:"Germany",hg:2,ag:1},{h:"Curaçao",a:"Ivory Coast",hg:0,ag:2}],
+  F:[{h:"Netherlands",a:"Japan",hg:2,ag:2},{h:"Sweden",a:"Tunisia",hg:5,ag:1},{h:"Netherlands",a:"Sweden",hg:5,ag:1},{h:"Japan",a:"Tunisia",hg:4,ag:0},{h:"Japan",a:"Sweden",hg:1,ag:1},{h:"Tunisia",a:"Netherlands",hg:1,ag:3}],
   G:[{h:"Belgium",a:"Egypt",hg:1,ag:1},{h:"Iran",a:"New Zealand",hg:2,ag:2},{h:"Belgium",a:"Iran",hg:0,ag:0},{h:"Egypt",a:"New Zealand",hg:3,ag:1}],
   H:[{h:"Spain",a:"Cape Verde",hg:0,ag:0},{h:"Saudi Arabia",a:"Uruguay",hg:1,ag:1},{h:"Spain",a:"Saudi Arabia",hg:4,ag:0},{h:"Uruguay",a:"Cape Verde",hg:2,ag:2}],
   I:[{h:"France",a:"Senegal",hg:3,ag:1},{h:"Norway",a:"Iraq",hg:4,ag:1},{h:"France",a:"Iraq",hg:3,ag:0},{h:"Norway",a:"Senegal",hg:3,ag:2}],
@@ -364,9 +365,9 @@ const REMAINING = {
   A:[],
   B:[],
   C:[],
-  D:[["Türkiye","USA"],["Paraguay","Australia"]],
-  E:[["Ecuador","Germany"],["Curaçao","Ivory Coast"]],
-  F:[["Japan","Sweden"],["Tunisia","Netherlands"]],
+  D:[],
+  E:[],
+  F:[],
   G:[["Egypt","Iran"],["New Zealand","Belgium"]],
   H:[["Cape Verde","Saudi Arabia"],["Uruguay","Spain"]],
   I:[["Norway","France"],["Senegal","Iraq"]],
@@ -483,7 +484,7 @@ function rankGroup(teams, matches, fifaRank){
 // ---------- rendering: group cards ----------
 // Precomputed dot status from a 100,000-trial run at build time (real results through Jun 23),
 // so the group tables show correct colours on first load before any live run.
-const INITIAL_QUAL = {"Mexico":"qual","South Korea":"alive","Czechia":"out","South Africa":"qual","Canada":"qual","Switzerland":"qual","Bosnia and Herzegovina":"qual","Qatar":"out","Brazil":"qual","Morocco":"qual","Scotland":"alive","Haiti":"out","USA":"qual","Australia":"alive","Paraguay":"alive","Türkiye":"out","Germany":"qual","Ivory Coast":"alive","Ecuador":"alive","Curaçao":"alive","Netherlands":"qual","Sweden":"alive","Japan":"qual","Tunisia":"out","New Zealand":"alive","Iran":"alive","Belgium":"alive","Egypt":"qual","Saudi Arabia":"alive","Uruguay":"alive","Spain":"qual","Cape Verde":"alive","Norway":"qual","France":"qual","Senegal":"alive","Iraq":"alive","Argentina":"qual","Austria":"alive","Jordan":"out","Algeria":"alive","Colombia":"qual","DR Congo":"alive","Portugal":"qual","Uzbekistan":"alive","England":"qual","Ghana":"qual","Panama":"out","Croatia":"alive"};
+const INITIAL_QUAL = {"Mexico":"qual","South Korea":"alive","Czechia":"out","South Africa":"qual","Canada":"qual","Switzerland":"qual","Bosnia and Herzegovina":"qual","Qatar":"out","Brazil":"qual","Morocco":"qual","Scotland":"alive","Haiti":"out","USA":"qual","Australia":"qual","Paraguay":"qual","Türkiye":"out","Germany":"qual","Ivory Coast":"qual","Ecuador":"qual","Curaçao":"out","Netherlands":"qual","Sweden":"qual","Japan":"qual","Tunisia":"out","New Zealand":"alive","Iran":"alive","Belgium":"alive","Egypt":"qual","Saudi Arabia":"alive","Uruguay":"alive","Spain":"qual","Cape Verde":"alive","Norway":"qual","France":"qual","Senegal":"alive","Iraq":"out","Argentina":"qual","Austria":"alive","Jordan":"out","Algeria":"alive","Colombia":"qual","DR Congo":"alive","Portugal":"qual","Uzbekistan":"out","England":"qual","Ghana":"qual","Panama":"out","Croatia":"alive"};
 
 // Dot status from the latest simulation, using 99% thresholds: a team that reaches the
 // knockouts in at least 99% of trials is treated as qualified for sure, one that reaches
